@@ -131,7 +131,7 @@ contract AddConsumer is Script {
 }
 
 contract GetRaffleAttributes is Script {
-    function run() public {
+    function run() public view {
         address mostRecentDeployed = DevOpsTools.get_most_recent_deployment(
             "Raffle",
             block.chainid

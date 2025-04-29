@@ -1,7 +1,7 @@
 # Compiler files
 cache/
 out/
-/gas-snapshot/       # Gas reports
+.gas-snapshot       # Gas reports
 
 # Ignores development broadcast logs
 !/broadcast
@@ -9,8 +9,8 @@ out/
 /broadcast/**/dry-run/
 
 
-# === Libraries ===
-lib/                # External libraries from forge install
+# # === Libraries ===
+# lib/                # External libraries from forge install
 
 # Docs
 docs/
