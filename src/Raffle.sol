@@ -81,7 +81,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         bytes memory /* checkData */
     )
         public
-        view
+        
         override
         returns (bool upkeepNeeded, bytes memory /* performData */)
     {
@@ -91,6 +91,14 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         bool hasPlayers = s_players.length > 0;
 
         upkeepNeeded = timePassed && raffleOpened && hasBalance && hasPlayers;
+
+        //tried to add this modification 
+
+        if(timePassed && !raffleOpened && !hasBalance && !hasPlayers) {
+           s_raffleState=RaffleState.OPEN;
+            s_players = new address payable[](0);
+            s_lastTimeStamp = block.timestamp;
+        }
 
         return (upkeepNeeded, hex"");
     }
@@ -125,9 +133,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
 
         emit RequestedRaffleWinner(requestId);
 
-        //generate random number to pick a winner
-
-        //Automate the process
+       
     }
 
     function fulfillRandomWords(

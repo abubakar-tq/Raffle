@@ -28,4 +28,4 @@ docs/
 Thumbs.db
 
 # === GitHub-related
-.github/             # Keep if you have workflows or issue templates!
+.github/            

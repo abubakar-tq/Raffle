@@ -1,5 +1,6 @@
-import App from "../App.jsx"
+"use client"
+import Home from '../components/Home.jsx'
 
 export default function Page() {
-  return <App />
+  return <Home></Home>
 }

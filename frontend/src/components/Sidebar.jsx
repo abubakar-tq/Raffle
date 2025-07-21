@@ -1,27 +1,34 @@
-import { NavLink } from "react-router-dom"
-import { Home, Info, Settings } from "lucide-react"
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Home, Info, Settings } from 'lucide-react'
 
 const Sidebar = () => {
+  const pathname = usePathname()
+
+  const isActive = (path) => pathname === path
+
   return (
     <aside className="sidebar">
       <ul className="sidebar-menu">
         <li>
-          <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
+          <Link href="/" className={isActive('/') ? 'active' : ''}>
             <Home size={18} />
             <span>Home</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink to="/about" className={({ isActive }) => (isActive ? "active" : "")}>
+          <Link href="/about" className={isActive('/about') ? 'active' : ''}>
             <Info size={18} />
             <span>About</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink to="/admin" className={({ isActive }) => (isActive ? "active" : "")}>
+          <Link href="/admin" className={isActive('/admin') ? 'active' : ''}>
             <Settings size={18} />
             <span>Admin Panel</span>
-          </NavLink>
+          </Link>
         </li>
       </ul>
     </aside>
