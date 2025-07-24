@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 import {Script, console} from "forge-std/Script.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 import {LinkToken} from "test/mocks/LinkToken.sol";
+import {MockAutomationRegistry} from "../test/mocks/MockAutomationRegistry.sol";
 
 contract CodeConstants {
     uint256 public SEPOLIA_CHAIN_ID = 11155111;
@@ -23,6 +24,8 @@ contract HelperConfig is Script, CodeConstants {
         uint32 callbackGasLimit;
         address link;
         address account;
+        address automationRegistrar;
+        address automationRegistry;
     }
 
     mapping(uint256 chainId => NetworkConfig) public networkConfigs;
@@ -39,7 +42,9 @@ contract HelperConfig is Script, CodeConstants {
             0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
             500000,
             0x779877A7B0D9E8603169DdbD7836e478b4624789,
-            0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66 //burner wallet address
+            0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66, //burner wallet address
+            0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976, //Automation Registrar address
+            0x86EFBD0b6736Bed994962f9797049422A3A8E8Ad //Automation Registry address
         );
     }
 
@@ -77,6 +82,9 @@ contract HelperConfig is Script, CodeConstants {
 
             LinkToken link = new LinkToken();
 
+            //both registrar and registry for anvil as we deployed such a mock
+            MockAutomationRegistry mockAutomationRegistry = new MockAutomationRegistry(address(link));
+
             vm.stopBroadcast();
             localNetworkConfig = NetworkConfig(
                 address(vrfCoordinator),
@@ -84,7 +92,9 @@ contract HelperConfig is Script, CodeConstants {
                 0,
                 500000,
                 address(link),
-                0x70997970C51812dc3A010C7d01b50e0d17dc79C8 //default foundary address
+                0x70997970C51812dc3A010C7d01b50e0d17dc79C8, //default foundary address
+                address(mockAutomationRegistry), 
+                address(mockAutomationRegistry) 
             );
             return localNetworkConfig;
         }

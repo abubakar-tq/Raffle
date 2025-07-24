@@ -36,10 +36,15 @@ anvil :; anvil -m 'test test test test test test test test test test test junk' 
 NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast -vvvv
 
 
-deploy-sepolia:; @forge script script/DeployRaffle.s.sol:DeployRaffle --rpc-url $(SEPOLIA_RPC_URL) --account sepkey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+deploy-sepolia:; @forge script script/DeployRaffleFactory.s.sol:DeployRaffleFactory --rpc-url $(SEPOLIA_RPC_URL) --account sepkey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
 deploy-anvil:
+	forge script script/DeployRaffleFactory.s.sol:DeployRaffleFactory $(NETWORK_ARGS)
+
+deploy-raffle-anvil:
 	forge script script/DeployRaffle.s.sol:DeployRaffle $(NETWORK_ARGS)
+
+	
 
 createSubscription:
 	forge script script/Interaction.s.sol:CreateSubscription $(NETWORK_ARGS)

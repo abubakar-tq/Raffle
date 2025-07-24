@@ -12,6 +12,10 @@ import {console} from "forge-std/Script.sol";
 import {FundSubscription, CreateSubscription} from "script/Interaction.s.sol";
 
 contract RaffleTest is Test, CodeConstants {
+
+
+    uint256 public constant ENTRANCE_FEE = 0.05 ether;
+    uint256 public constant TIME_INTERVAL = 30 seconds;
     Raffle public raffle;
     HelperConfig public helperConfig;
     uint256 entranceFee;
@@ -30,10 +34,10 @@ contract RaffleTest is Test, CodeConstants {
 
     function setUp() external {
         DeployRaffle deployer = new DeployRaffle();
-        (raffle, helperConfig) = deployer.deployContract();
+        (raffle, helperConfig) = deployer.deployContract(ENTRANCE_FEE, TIME_INTERVAL);
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
-        entranceFee = config.entranceFee;
-        timeInterval = config.timeInterval;
+        entranceFee = ENTRANCE_FEE;
+        timeInterval = TIME_INTERVAL;
         vrfCoordinator = config.vrfCoordinator;
         subscriptionId = config.subscriptionId;
         gasLane = config.gasLane;

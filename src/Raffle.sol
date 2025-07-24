@@ -95,8 +95,8 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         return (upkeepNeeded, hex"");
     }
 
-    //Pick Winenr
-    function performUpkeep(bytes calldata /*Perform Data*/ ) external override {
+    //Pick Winner
+    function performUpkeep(bytes calldata /*Perform Data*/ ) external override onlyOwnerOrCoordinator {
         //if enough time has passed
         (bool timeToPickWinner,) = checkUpkeep("");
         if (!timeToPickWinner) {
