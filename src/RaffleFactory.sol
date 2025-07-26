@@ -18,8 +18,12 @@ contract RaffleFactory is ConfirmedOwner {
     error RaffleFactory_PlayerAddressCannotBeZero();
     error RaffleFactory_SubscriptionIdNotSet(uint256 subscriptionId);
     error RaffleFactory_AmountMustBeGreaterThanZero(uint256 amount);
+    error RaffleFactory_PlayerAddressZero();
+    error RaffleFactory_WithdrawFailed();
 
     event RaffleCreated(uint256 indexed raffleId, address indexed raffleAddress, string name);
+    event ETHReceived(address indexed sender, uint256 amount);
+    event ETHWithdrawn(address indexed recipient, uint256 amount);
 
     uint96 private constant UPKEEP_LINK_INITIAL_FUNDS = 0.5 ether; //LINK
     mapping(uint256 => address) private idToRaffle;
@@ -142,6 +146,27 @@ contract RaffleFactory is ConfirmedOwner {
         raffle.openRaffle();
     }
 
+     // Receive ETH and accumulate
+    receive() external payable {
+        emit ETHReceived(msg.sender, msg.value);
+    }
+
+    // Withdraw accumulated ETH to owner
+    function withdrawETH(address payable recipient) external onlyOwner {
+        if (recipient == address(0)) {
+            revert RaffleFactory_PlayerAddressZero();
+        }
+        uint256 balance = address(this).balance;
+        if (balance == 0) {
+            revert RaffleFactory_AmountMustBeGreaterThanZero(0);
+        }
+        (bool success, ) = recipient.call{value: balance}("");
+        if (!success) {
+            revert RaffleFactory_WithdrawFailed();
+        }
+        emit ETHWithdrawn(recipient, balance);
+    }
+
     function getRaffleById(uint256 id) external view returns (address) {
         return idToRaffle[id];
     }
@@ -186,5 +211,11 @@ contract RaffleFactory is ConfirmedOwner {
 
     function getOwner() external view returns (address) {
         return owner();
+    }
+    function getAutomationRegistrar() external view returns (address) {
+        return s_automationRegistrar;
+    }
+    function getAutomationRegistry() external view returns (address) {
+        return s_automationRegistry;
     }
 }

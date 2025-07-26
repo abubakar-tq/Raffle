@@ -4,7 +4,9 @@
 
 DEFAULT_ANVIL_KEY := 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
 
-RAFFLE_FACTORY_ADDRESS := 0x0f5D1ef48f12b6f691401bfe88c2037c690a6afe
+DEFAULT_ANVIL_ACCOUNT := 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+
+RAFFLE_FACTORY_ADDRESS := 0x712516e61C8B383dF4A63CFe83d7701Bce54B03e
 
 
 help:
@@ -61,4 +63,10 @@ createRaffle:
 	cast send $(RAFFLE_FACTORY_ADDRESS) "CreateRaffle(string memory,uint256,uint256)" "Test Raffle" 1000000000000000 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
 
 getRaffle:
-	cast call $(RAFFLE_FACTORY_ADDRESS) "getRaffleById(uint256)" 1 --rpc-url http://localhost:8545 
+	cast call $(RAFFLE_FACTORY_ADDRESS) "getRaffleById(uint256)" 0 --rpc-url http://localhost:8545 
+
+enterRaffle:
+	cast send "0x27D668603c635f85A667149a8b10ad4729F75A34" "enterRaffle()"  --value 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
+
+getPlayers:
+	cast call $(RAFFLE_FACTORY_ADDRESS) "getPlayersTotalTickets(uint256,address)" 0 $(DEFAULT_ANVIL_ACCOUNT) --rpc-url http://localhost:8545

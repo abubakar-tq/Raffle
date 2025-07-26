@@ -8,10 +8,12 @@ import {Script, console} from "forge-std/Script.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 import {LinkToken} from "test/mocks/LinkToken.sol";
 import {Raffle} from "src/Raffle.sol";
+import {Vm} from "forge-std/Vm.sol";
 
 contract RaffleFactoryTest is Test {
     event RaffleCreated(uint256 indexed raffleId, address indexed raffleAddress, string name);
 
+    uint256 public constant LOCAL_CHAIN_ID = 31337;
     RaffleFactory private raffleFactory;
     LinkToken private linkToken;
     VRFCoordinatorV2_5Mock private vrfCoordinator;
@@ -343,6 +345,95 @@ contract RaffleFactoryTest is Test {
         vm.expectRevert("Only callable by owner");
         raffleFactory.openRaffle(0);
     }
+
+
+
+    ///withdraw ETH from RaffleFactory
+
+    function testWithdrawETH() public {
+        vm.startPrank(owner);
+        raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
+        uint256 raffleId = raffleFactory.getRaffleCount() - 1;
+
+        // Player enters raffle
+        vm.deal(PLAYER, 1 ether);
+        vm.startPrank(PLAYER);
+        Raffle raffle = Raffle(raffleFactory.getRaffleById(raffleId));
+        raffle.enterRaffle{value: ENTRANCE_FEE}();
+        vm.stopPrank();
+
+        // Fund subscription (shared by both raffles)
+
+        if (block.chainid == LOCAL_CHAIN_ID) {
+            vm.prank(owner);
+            VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(raffleFactory.getSubscriptionId(), FUND_AMOUNT);
+        } else {
+            vm.startPrank(owner);
+            linkToken.approve(address(raffleFactory), FUND_AMOUNT);
+            raffleFactory.fundVRFSubscription(FUND_AMOUNT);
+            vm.stopPrank();
+        }
+
+        uint256 ownerInitialBalance = address(owner).balance;
+        //perform upkeep to close the raffle and distribute funds
+        vm.warp(block.timestamp + TIME_INTERVAL + 1);
+        vm.roll(block.number + 1);
+
+        vm.recordLogs();
+
+        vm.prank(raffle.getOwner());
+        raffle.performUpkeep("");
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        bytes32 requestId = entries[1].topics[1];
+
+        // Simulate VRF callback
+        VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(uint256(requestId), address(raffle));
+
+
+        // Withdraw ETH
+        uint256 balanceBefore = address(raffleFactory).balance;
+        assert(balanceBefore > 0);
+
+        vm.prank(owner);
+        raffleFactory.withdrawETH(payable(owner));
+
+        uint256 balanceAfter = address(raffleFactory).balance;
+        assertEq(balanceAfter, 0);
+
+        assertEq(address(owner).balance, balanceBefore + ownerInitialBalance);
+    }
+
+    function testWithdrawETHRevertsIfRecipientIsZeroAddress() public {
+        vm.startPrank(owner);
+        raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
+
+        vm.expectRevert(RaffleFactory.RaffleFactory_PlayerAddressZero.selector);
+        raffleFactory.withdrawETH(payable(address(0)));
+        vm.stopPrank();
+    }
+
+    function testWithdrawETHRevertsIfBalanceIsZero() public {
+        vm.startPrank(owner);
+        raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
+
+        vm.expectRevert(abi.encodeWithSelector(RaffleFactory.RaffleFactory_AmountMustBeGreaterThanZero.selector, 0));
+        raffleFactory.withdrawETH(payable(owner));
+        vm.stopPrank();
+    }
+   
+    function testWithdrawETHRevertsIfNotOwner() public {
+        vm.startPrank(owner);
+        raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
+        vm.stopPrank();
+
+        vm.prank(address(3)); // Non-owner
+        vm.expectRevert("Only callable by owner");
+        raffleFactory.withdrawETH(payable(owner));
+    }
+
+
+
+
 
     
 }
