@@ -54,20 +54,22 @@ contract RaffleFactory is ConfirmedOwner {
         if (nameToRaffle[name] != address(0)) {
             revert RaffleFactory_RaffleAlreadyExists(name);
         }
-        Raffle raffle =
-            new Raffle(entranceFee, timeInterval, s_vrfCoordinator, s_subscriptionId, s_gasLane, s_callbackGasLimit);
 
         if (s_subscriptionId == 0) {
             createVRFSubscription();
         }
 
+        Raffle raffle =
+            new Raffle(entranceFee, timeInterval, s_vrfCoordinator, s_subscriptionId, s_gasLane, s_callbackGasLimit);
+
+        idToRaffle[s_raffleCount] = address(raffle);
+        nameToRaffle[name] = address(raffle);
+
         addConsumerToSubscription(s_raffleCount);
         // Register upkeep
         uint256 upkeepId = registerUpKeep(s_raffleCount, name);
-
         raffleToUpkeepId[s_raffleCount] = upkeepId;
-        idToRaffle[s_raffleCount] = address(raffle);
-        nameToRaffle[name] = address(raffle);
+
         s_raffleCount++;
         emit RaffleCreated(s_raffleCount - 1, address(raffle), name);
     }
@@ -81,18 +83,11 @@ contract RaffleFactory is ConfirmedOwner {
         if (amount <= 0) {
             revert RaffleFactory_AmountMustBeGreaterThanZero(amount);
         }
-        if (s_subscriptionId == 0) {
-            revert RaffleFactory_SubscriptionIdNotSet(s_subscriptionId);
-        }
 
         LinkToken(s_linkToken).transferAndCall(s_vrfCoordinator, amount, abi.encode(s_subscriptionId));
     }
 
     function addConsumerToSubscription(uint256 raffleId) internal {
-        if (s_subscriptionId == 0) {
-            revert RaffleFactory_SubscriptionIdNotSet(s_subscriptionId);
-        }
-
         Raffle raffle = Raffle(idToRaffle[raffleId]);
 
         VRFCoordinatorV2_5Mock(s_vrfCoordinator).addConsumer(s_subscriptionId, address(raffle));
@@ -116,7 +111,7 @@ contract RaffleFactory is ConfirmedOwner {
             upkeepContract: address(raffle),
             gasLimit: s_callbackGasLimit,
             adminAddress: msg.sender,
-            triggerType: 1, 
+            triggerType: 1,
             checkData: "",
             triggerConfig: "",
             offchainConfig: "",
@@ -128,12 +123,9 @@ contract RaffleFactory is ConfirmedOwner {
         return upKeepId;
     }
 
-    function fundUpkeep(uint96 amount,uint256 upKeepId) external onlyOwner {
+    function fundUpkeep(uint96 amount, uint256 upKeepId) external onlyOwner {
         if (amount <= 0) {
             revert RaffleFactory_AmountMustBeGreaterThanZero(amount);
-        }
-        if (upKeepId == 0) {
-            revert RaffleFactory_SubscriptionIdNotSet(s_subscriptionId);
         }
 
         LinkToken(s_linkToken).approve(s_automationRegistry, amount);
@@ -174,5 +166,25 @@ contract RaffleFactory is ConfirmedOwner {
             revert RaffleFactory_RaffleNotOpen(raffleId);
         }
         return raffle.getPlayersTotalTickets(player);
+    }
+
+    function getRaffleUpkeepId(uint256 raffleId) external view returns (uint256) {
+        return raffleToUpkeepId[raffleId];
+    }
+
+    function getSubscriptionId() external view returns (uint256) {
+        return s_subscriptionId;
+    }
+
+    function getVRFCoordinator() external view returns (address) {
+        return s_vrfCoordinator;
+    }
+
+    function getLinkToken() external view returns (address) {
+        return s_linkToken;
+    }
+
+    function getOwner() external view returns (address) {
+        return owner();
     }
 }

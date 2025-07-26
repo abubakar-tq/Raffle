@@ -83,7 +83,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
 
         upkeepNeeded = timePassed && raffleOpened && hasBalance && hasPlayers;
 
-        //tried to add this modification
+        //If time has passed and there are not players, close the raffle
 
         if (timePassed && !hasPlayers) {
             s_raffleState = RaffleState.CLOSED; //have to close

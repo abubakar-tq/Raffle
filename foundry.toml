@@ -20,4 +20,10 @@ fs_permissions = [
 [fuzz]
 runs=256
 
+[profile.solx]
+solc_version = "/home/bakar/.local/bin/solx"
+evm_version = "paris"
+optimization=3
+gas_limit=100_000_000
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -1,0 +1,12 @@
+Raffle_TransferFailed(): 0xba31c4f3
+Raffle_SendMoreToEnterRaffle(): 0x3e482529
+Raffle_RaffleNotOpen(): 0x6eac21ed
+Raffle_UpkeepNotNeeded(uint256,uint256,uint256): 0xe059521b
+Raffle_NotOwner(): 0x5a78460b
+Raffle_RaffleNotClosed(): 0x0f18635e
+RaffleFactory_RaffleAlreadyExists(string): 0x98999e18
+RaffleFactory_RaffleDoesNotExist(uint256): 0x1a108488
+RaffleFactory_RaffleNotOpen(uint256): 0x294f4b92
+RaffleFactory_PlayerAddressCannotBeZero(): 0xc15ece58
+RaffleFactory_SubscriptionIdNotSet(uint256): 0x6ce1730d
+RaffleFactory_AmountMustBeGreaterThanZero(uint256): 0x8fd4c4f1
