@@ -93,8 +93,8 @@ contract HelperConfig is Script, CodeConstants {
                 500000,
                 address(link),
                 0x70997970C51812dc3A010C7d01b50e0d17dc79C8, //default foundary address
-                address(mockAutomationRegistry), 
-                address(mockAutomationRegistry) 
+                address(mockAutomationRegistry),
+                address(mockAutomationRegistry)
             );
             return localNetworkConfig;
         }

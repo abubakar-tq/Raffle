@@ -18,7 +18,7 @@ contract RaffleIntegrationTest is Test {
     LinkToken linkToken;
     VRFCoordinatorV2_5Mock vrfCoordinator;
     MockKeeperRegistry2_1 automationRegistry;
-    address owner ;
+    address owner;
     address player1 = address(0x456);
     address player2 = address(0x789);
     uint256 constant ENTRANCE_FEE = 0.01 ether;
@@ -43,12 +43,28 @@ contract RaffleIntegrationTest is Test {
         vm.deal(player1, 10 ether);
         vm.deal(player2, 10 ether);
 
-        // Mint LINK tokens to owner for funding
-      
-        linkToken.mint(owner, FUND_AMOUNT * 10);
+        if (block.chainid == LOCAL_CHAIN_ID) {
+            // Mint LINK tokens to owner
+
+            linkToken.mint(owner, 100 ether);
+
+            LinkToken(linkToken).mint(address(raffleFactory), FUND_AMOUNT);
+        } else {
+            vm.startPrank(owner);
+            // Transfer LINK to RaffleFactory
+            LinkToken(linkToken).transfer(address(raffleFactory), FUND_AMOUNT);
+            vm.stopPrank();
+        }
     }
 
-    function testFullRaffleLifecycle() public {
+    modifier skipFork() {
+        if (block.chainid != LOCAL_CHAIN_ID) {
+            return;
+        }
+        _;
+    }
+
+    function testFullRaffleLifecycle() public skipFork {
         // Step 1: Create a raffle
         vm.prank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME_1, ENTRANCE_FEE, TIME_INTERVAL);
@@ -57,7 +73,7 @@ contract RaffleIntegrationTest is Test {
         Raffle raffle = Raffle(raffleFactory.getRaffleById(raffleId));
         uint256 subId = raffleFactory.getSubscriptionId();
 
-        assert(raffle.getRaffleState()== Raffle.RaffleState.OPEN);
+        assert(raffle.getRaffleState() == Raffle.RaffleState.OPEN);
         assertEq(raffle.getTotalPlayers(), 0);
         assertEq(raffle.getSubId(), subId);
         assertEq(raffle.getOwner(), address(raffleFactory));
@@ -110,16 +126,15 @@ contract RaffleIntegrationTest is Test {
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(uint256(requestId), address(raffle));
 
         // Step 6: Verify winner and raffle state
-        assert(raffle.getRaffleState()== Raffle.RaffleState.CLOSED);
+        assert(raffle.getRaffleState() == Raffle.RaffleState.CLOSED);
         address winner = raffle.getRecentWinner();
         assertTrue(winner == player1 || winner == player2);
 
         uint256 totalBalance = 2 * ENTRANCE_FEE;
         uint256 ownerShare = (totalBalance * 10) / 100;
         uint256 winnerShare = totalBalance - ownerShare;
-    
 
-        assertEq(address(winner).balance, winnerShare + (10 ether-ENTRANCE_FEE)); // Initial balance + winnings
+        assertEq(address(winner).balance, winnerShare + (10 ether - ENTRANCE_FEE)); // Initial balance + winnings
         assertEq(address(raffleFactory).balance, ownerShare); // ETH accumulates in RaffleFactory
 
         // Step 7: Verify getPlayersTotalTickets reverts
@@ -130,7 +145,7 @@ contract RaffleIntegrationTest is Test {
         vm.prank(owner);
         raffleFactory.openRaffle(raffleId);
 
-        assert(raffle.getRaffleState()==Raffle.RaffleState.OPEN);
+        assert(raffle.getRaffleState() == Raffle.RaffleState.OPEN);
         assertEq(raffle.getTotalPlayers(), 0);
 
         // Step 9: Verify new raffle entry
@@ -141,7 +156,7 @@ contract RaffleIntegrationTest is Test {
         assertEq(raffle.getPlayersTotalTickets(player1), 1);
     }
 
-    function testMultipleRaffles() public {
+    function testMultipleRaffles() public skipFork {
         // Create two raffles with different parameters
         vm.startPrank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME_1, ENTRANCE_FEE, TIME_INTERVAL);
@@ -208,7 +223,7 @@ contract RaffleIntegrationTest is Test {
         vm.roll(block.number + 2);
 
         vm.recordLogs();
-         vm.prank(address(raffleFactory)); // Owner must call performUpkeep
+        vm.prank(address(raffleFactory)); // Owner must call performUpkeep
         raffle2.performUpkeep("");
         entries = vm.getRecordedLogs();
         requestId = entries[1].topics[1];
@@ -220,8 +235,6 @@ contract RaffleIntegrationTest is Test {
         assert(raffle2.getRaffleState() == Raffle.RaffleState.CLOSED);
         assertEq(raffle2.getRecentWinner(), player1);
     }
-
-   
 
     function testGetPlayersTotalTicketsRevertsForInvalidCases() public {
         vm.prank(owner);
@@ -235,10 +248,5 @@ contract RaffleIntegrationTest is Test {
         // Zero player address
         vm.expectRevert(abi.encodeWithSelector(RaffleFactory.RaffleFactory_PlayerAddressCannotBeZero.selector));
         raffleFactory.getPlayersTotalTickets(raffleId, address(0));
-
     }
-
-   
-
-   
 }

@@ -11,9 +11,7 @@ import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VR
 import {Script, console} from "forge-std/Script.sol";
 import {FundSubscription, CreateSubscription} from "script/Interaction.s.sol";
 
-contract RaffleTest is Script,Test, CodeConstants {
-
-
+contract RaffleTest is Script, Test, CodeConstants {
     uint256 public constant ENTRANCE_FEE = 0.05 ether;
     uint256 public constant TIME_INTERVAL = 30 seconds;
     Raffle public raffle;
@@ -129,13 +127,13 @@ contract RaffleTest is Script,Test, CodeConstants {
         assert(!upkeepNeeded);
     }
 
-    function testUpKeepClosesRaffleIfNoPlayersAndTimePassed() external  {
+    function testUpKeepClosesRaffleIfNoPlayersAndTimePassed() external {
         //Arrange
         vm.warp(block.timestamp + 30 + 1);
         vm.roll(block.number + 1);
 
         //Act
-   
+
         raffle.checkUpkeep("");
 
         //Assert
@@ -215,7 +213,7 @@ contract RaffleTest is Script,Test, CodeConstants {
         playerEnteredRaffle
     {
         vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
-        
+
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(randomRequestId, address(raffle));
     }
 
@@ -233,7 +231,7 @@ contract RaffleTest is Script,Test, CodeConstants {
         uint256 raffleBalance = address(raffle).balance;
         console.log("Raffle Balance : ", raffleBalance);
 
-        uint256 ownerShare= raffleBalance * 10 / 100; // 10% of the total entrance fees
+        uint256 ownerShare = raffleBalance * 10 / 100; // 10% of the total entrance fees
         console.log("Owner Share : ", ownerShare);
 
         uint256 winnerShare = raffleBalance * 90 / 100; // 90% of the total entrance fees
@@ -249,9 +247,7 @@ contract RaffleTest is Script,Test, CodeConstants {
         Vm.Log[] memory entries = vm.getRecordedLogs();
         bytes32 requestId = entries[1].topics[1];
 
-        
-
-        uint256 winnerPrize= ((entranceFee * (morePlayersToEnter + 1))*90 )/ 100; // 90% of the total entrance fees
+        uint256 winnerPrize = ((entranceFee * (morePlayersToEnter + 1)) * 90) / 100; // 90% of the total entrance fees
         console.log("Winner Prize : ", winnerPrize);
 
         //check for recent winner picket emitted
@@ -263,7 +259,7 @@ contract RaffleTest is Script,Test, CodeConstants {
         address recentWinner = raffle.getRecentWinner();
         // console.log("Recent Winner : ", recentWinner);
         uint256 winnerBalance = recentWinner.balance;
-       
+
         // console.log("Prize : ", prize);
         // console.log("Winner Starting Balance : ", winnerStartingBalance);
         // console.log("Winner Balance : ", winnerBalance);

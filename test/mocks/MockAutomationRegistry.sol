@@ -16,7 +16,7 @@ contract MockAutomationRegistry {
     }
 
     mapping(uint256 => Upkeep) public upkeeps;
-    uint256 public upkeepCount=1;
+    uint256 public upkeepCount = 1;
     LinkTokenInterface public immutable LINK_TOKEN;
 
     event UpkeepRegistered(uint256 indexed id, address target, address admin);
@@ -26,9 +26,7 @@ contract MockAutomationRegistry {
         LINK_TOKEN = LinkTokenInterface(linkToken);
     }
 
-    function registerUpkeep(
-        AutomationStructs.RegistrationParams calldata params
-    ) external returns (uint256) {
+    function registerUpkeep(AutomationStructs.RegistrationParams calldata params) external returns (uint256) {
         require(params.upkeepContract != address(0), "Invalid target");
         require(params.adminAddress != address(0), "Invalid admin");
         require(params.amount > 0, "Invalid amount");

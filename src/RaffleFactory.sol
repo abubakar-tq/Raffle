@@ -107,7 +107,7 @@ contract RaffleFactory is ConfirmedOwner {
             revert RaffleFactory_RaffleDoesNotExist(raffleId);
         }
 
-        LinkToken(s_linkToken).approve(s_automationRegistry, UPKEEP_LINK_INITIAL_FUNDS);
+        LinkToken(s_linkToken).approve(s_automationRegistrar, UPKEEP_LINK_INITIAL_FUNDS);
 
         AutomationStructs.RegistrationParams memory config = AutomationStructs.RegistrationParams({
             name: name,
@@ -146,7 +146,7 @@ contract RaffleFactory is ConfirmedOwner {
         raffle.openRaffle();
     }
 
-     // Receive ETH and accumulate
+    // Receive ETH and accumulate
     receive() external payable {
         emit ETHReceived(msg.sender, msg.value);
     }
@@ -160,7 +160,7 @@ contract RaffleFactory is ConfirmedOwner {
         if (balance == 0) {
             revert RaffleFactory_AmountMustBeGreaterThanZero(0);
         }
-        (bool success, ) = recipient.call{value: balance}("");
+        (bool success,) = recipient.call{value: balance}("");
         if (!success) {
             revert RaffleFactory_WithdrawFailed();
         }
@@ -212,9 +212,11 @@ contract RaffleFactory is ConfirmedOwner {
     function getOwner() external view returns (address) {
         return owner();
     }
+
     function getAutomationRegistrar() external view returns (address) {
         return s_automationRegistrar;
     }
+
     function getAutomationRegistry() external view returns (address) {
         return s_automationRegistry;
     }

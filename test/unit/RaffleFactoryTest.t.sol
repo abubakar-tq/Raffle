@@ -34,14 +34,33 @@ contract RaffleFactoryTest is Test {
         vrfCoordinator = VRFCoordinatorV2_5Mock(raffleFactory.getVRFCoordinator());
         owner = raffleFactory.getOwner();
 
-        // Fund the owner with LINK tokens
+        // Fund the owner
         vm.deal(owner, 100 ether);
-        vm.prank(owner);
-        linkToken.mint(owner, 100 ether);
+        vm.deal(PLAYER, 10 ether);
+
+        if (block.chainid == LOCAL_CHAIN_ID) {
+            // Mint LINK tokens to owner
+
+            linkToken.mint(owner, 100 ether);
+
+            LinkToken(linkToken).mint(address(raffleFactory), FUND_AMOUNT);
+        } else {
+            vm.startPrank(owner);
+            // Transfer LINK to RaffleFactory
+            LinkToken(linkToken).transfer(address(raffleFactory), FUND_AMOUNT);
+            vm.stopPrank();
+        }
     }
 
     modifier notOnLocal() {
         if (block.chainid == 31337) {
+            return;
+        }
+        _;
+    }
+
+    modifier skipFork() {
+        if (block.chainid != LOCAL_CHAIN_ID) {
             return;
         }
         _;
@@ -52,6 +71,20 @@ contract RaffleFactoryTest is Test {
     /////////////////////
 
     function testCreateRaffle() public {
+        vm.startPrank(owner);
+        raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
+
+        // Check if the raffle was created
+        address raffleAddress = raffleFactory.getRaffleByName(RAFFLE_NAME);
+        console.log("Raffle Address: ", raffleAddress);
+
+        assert(raffleAddress != address(0));
+
+        // Verify raffle count
+        assertEq(raffleFactory.getRaffleCount(), 1);
+    }
+
+    function testCreateRaffleEventEmission() public skipFork {
         vm.startPrank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
 
@@ -231,7 +264,7 @@ contract RaffleFactoryTest is Test {
         assert(subscriptionId > 0);
     }
 
-    function testRaffleIsAddedAsConsumer() public {
+    function testRaffleIsAddedAsConsumer() public skipFork {
         vm.prank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
 
@@ -252,9 +285,6 @@ contract RaffleFactoryTest is Test {
         raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
 
         console.log("Subscription Created Successfully");
-        // Mint LINK tokens to owner
-        vm.prank(owner);
-        LinkToken(linkToken).mint(owner, FUND_AMOUNT);
 
         // Transfer LINK tokens from owner to RaffleFactory
         vm.prank(owner);
@@ -287,19 +317,31 @@ contract RaffleFactoryTest is Test {
         vm.stopPrank();
     }
 
-    function testOpenRaffleAfterDraw() public notOnLocal{
+    function testOpenRaffleAfterDraw() public skipFork {
         vm.prank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
         uint256 raffleId = raffleFactory.getRaffleCount() - 1;
 
         Raffle raffle = Raffle(raffleFactory.getRaffleById(raffleId));
+        vm.prank(PLAYER);
         raffle.enterRaffle{value: ENTRANCE_FEE}();
+
+        vm.prank(owner);
+        VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(raffleFactory.getSubscriptionId(), FUND_AMOUNT);
 
         // Simulate the upkeep call to close the raffle
         vm.warp(block.timestamp + TIME_INTERVAL + 1);
         vm.roll(block.number + 1);
+
+        vm.recordLogs();
+
         vm.prank(raffle.getOwner());
         raffle.performUpkeep("");
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        bytes32 requestId = entries[1].topics[1];
+
+        // Simulate VRF callback
+        VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(uint256(requestId), address(raffle));
 
         // Now open the raffle again
         vm.prank(owner);
@@ -346,11 +388,9 @@ contract RaffleFactoryTest is Test {
         raffleFactory.openRaffle(0);
     }
 
-
-
     ///withdraw ETH from RaffleFactory
 
-    function testWithdrawETH() public {
+    function testWithdrawETH() public skipFork {
         vm.startPrank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
         uint256 raffleId = raffleFactory.getRaffleCount() - 1;
@@ -389,7 +429,6 @@ contract RaffleFactoryTest is Test {
         // Simulate VRF callback
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(uint256(requestId), address(raffle));
 
-
         // Withdraw ETH
         uint256 balanceBefore = address(raffleFactory).balance;
         assert(balanceBefore > 0);
@@ -420,7 +459,7 @@ contract RaffleFactoryTest is Test {
         raffleFactory.withdrawETH(payable(owner));
         vm.stopPrank();
     }
-   
+
     function testWithdrawETHRevertsIfNotOwner() public {
         vm.startPrank(owner);
         raffleFactory.CreateRaffle(RAFFLE_NAME, ENTRANCE_FEE, TIME_INTERVAL);
@@ -430,10 +469,4 @@ contract RaffleFactoryTest is Test {
         vm.expectRevert("Only callable by owner");
         raffleFactory.withdrawETH(payable(owner));
     }
-
-
-
-
-
-    
 }
