@@ -52,7 +52,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         i_timeInterval = timeInterval;
         i_keyHash = gasLane;
         i_subscriptionId = subscriptionId;
-        i_callbackGasLimit = callbackGasLimit;
+        i_callbackGasLimit = callbackGasLimit/2;
         i_owner = msg.sender;
 
         s_lastTimeStamp = block.timestamp;

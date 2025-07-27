@@ -8,6 +8,10 @@ DEFAULT_ANVIL_ACCOUNT := 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 
 RAFFLE_FACTORY_ADDRESS := 0x712516e61C8B383dF4A63CFe83d7701Bce54B03e
 
+RAFFLE_FACTORY_ADDRESS_SEPOLIA := 0x2ea3a205B3C45E7a99C4CAe26f83763F92D94647
+
+SEP_ACC := 0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66
+
 
 help:
 	@echo "Usage:"
@@ -62,11 +66,34 @@ fundSubscription:
 createRaffle:
 	cast send $(RAFFLE_FACTORY_ADDRESS) "CreateRaffle(string memory,uint256,uint256)" "Test Raffle" 1000000000000000 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
 
+createRaffleSepolia:
+	cast send $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "CreateRaffle(string memory,uint256,uint256)" "Test Raffle Sepolia" 1000000000000000 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
+
+
 getRaffle:
 	cast call $(RAFFLE_FACTORY_ADDRESS) "getRaffleById(uint256)" 0 --rpc-url http://localhost:8545 
 
+getRaffleSepolia:
+	cast call $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "getRaffleById(uint256)" 0 --rpc-url $(SEPOLIA_RPC_URL)
+
 enterRaffle:
 	cast send "0x27D668603c635f85A667149a8b10ad4729F75A34" "enterRaffle()"  --value 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
+
+enterRaffleSepolia:
+	cast send "0x4B7F3Db2621cfDCE7c9d652d8287c02003E5Fef1" "enterRaffle()" --value 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
+
+getRaffleStateSepolia:
+	cast call "0x4B7F3Db2621cfDCE7c9d652d8287c02003E5Fef1" "getRaffleState()"  --rpc-url $(SEPOLIA_RPC_URL) 
+
+checkUpKeepSeplia:
+	cast call "0x4B7F3Db2621cfDCE7c9d652d8287c02003E5Fef1" "checkUpkeep(bytes memory)" 0x --rpc-url $(SEPOLIA_RPC_URL)
+
+
+
+
+getPlayersSepolia:
+	cast call $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "getPlayersTotalTickets(uint256,address)" 0 $(SEP_ACC)--rpc-url $(SEPOLIA_RPC_URL)
+
 
 getPlayers:
 	cast call $(RAFFLE_FACTORY_ADDRESS) "getPlayersTotalTickets(uint256,address)" 0 $(DEFAULT_ANVIL_ACCOUNT) --rpc-url http://localhost:8545
