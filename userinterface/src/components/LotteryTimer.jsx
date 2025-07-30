@@ -31,40 +31,36 @@ export default function LotteryTimer({ endTime }) {
   }, [endTime])
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden relative">
+
+      <div className="flex rounded-2xl shadow-lg justify-center items-center gap-4">
+
         {/* Hours Section */}
-        <div className="px-6 py-4 text-center relative">
-          <div className="text-3xl font-bold text-gray-900">{timeLeft.hours.toString().padStart(2, "0")}</div>
-          <div className="text-sm text-gray-500 mt-1">Hours</div>
-
-          {/* Right notch */}
-          <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white/95 rounded-full"></div>
-          <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-transparent rounded-full border-4 border-white/95"></div>
+        <div className="px-6 py-4 text-center bg-[#FFFFFF]  rounded-xl w-25">
+          <p className="text-3xl font-bold text-gray-900">{timeLeft.hours.toString().padStart(2, "0")}</p>
+          <p className="text-sm text-gray-500 mt-1">Hours</p>
         </div>
 
+       
+
+       
+        
         {/* Minutes Section */}
-        <div className="px-6 py-4 text-center relative">
-          <div className="text-3xl font-bold text-gray-900">{timeLeft.minutes.toString().padStart(2, "0")}</div>
-          <div className="text-sm text-gray-500 mt-1">Minutes</div>
-
-          {/* Left notch */}
-          <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-transparent rounded-full"></div>
-
-          {/* Right notch */}
-          <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white/95 rounded-full"></div>
-          <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-transparent rounded-full border-4 border-white/95"></div>
+        <div className="px-6 py-4 text-center bg-[#FFFFFF] rounded-xl w-25">
+          <p className="text-3xl font-bold text-gray-900">{timeLeft.minutes.toString().padStart(2, "0")}</p>
+          <p className="text-sm text-gray-500 mt-1">Minutes</p>
         </div>
+
+        
+
 
         {/* Seconds Section */}
-        <div className="px-6 py-4 text-center relative">
-          <div className="text-3xl font-bold text-gray-900">{timeLeft.seconds.toString().padStart(2, "0")}</div>
-          <div className="text-sm text-gray-500 mt-1">Seconds</div>
-
-          {/* Left notch */}
-          <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-transparent rounded-full"></div>
+        <div className="px-6 py-4 text-center bg-[#FFFFFF] rounded-xl w-25">
+          <p className="text-3xl font-bold text-gray-900">{timeLeft.seconds.toString().padStart(2, "0")}</p>
+          <p className="text-sm text-gray-500 mt-1">Seconds</p>
         </div>
+
+        
       </div>
-    </div>
+  
   )
 }

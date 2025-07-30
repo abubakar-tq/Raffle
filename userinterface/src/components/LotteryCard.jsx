@@ -1,79 +1,157 @@
-"use client"
+"use client";
 
-
+import { useState } from "react";
+import { DollarSign } from "lucide-react";
 
 const colorClasses = {
-  blue: "from-blue-400 to-blue-600",
-  orange: "from-orange-400 to-orange-600",
-  green: "from-green-400 to-green-600",
-  red: "from-red-400 to-red-600",
-  purple: "from-purple-400 to-purple-600",
-  pink: "from-pink-400 to-pink-600",
-}
+  blue: {
+    header: "bg-[#5BBBFF]",
+    body: "bg-[#1FA2FF]",
+    buyButtonGradient: {
+      background: "linear-gradient(91deg, #FFF -43.8%, #73C5FF 22.19%, #0067A2 99.18%)"
+    }
+  },
+  orange: {
+    header: "bg-[#FFAD56]",
+    body: "bg-[#F47E00]",
+    buyButtonGradient: {
+      background: "linear-gradient(91deg, #FFF -43.8%, #F47E00 22.19%, #AF5F08 99.18%)"
+    }
+  },
+  green: {
+    header: "bg-[#32BF45]",
+    body: "bg-[#229131]",
+    buyButtonGradient: {
+      background: "linear-gradient(91deg, #FFF -43.8%, #229131 22.19%, #00580C 99.18%)"
+    }
+  },
+  red: {
+    header: "bg-[#FF5858]",
+    body: "bg-[#FF5858]",
+    buyButtonGradient: {
+      background: "linear-gradient(91deg, #FFF -43.8%, #E53030 22.19%, #7C0000 99.18%)"
+    }
+  },
+  purple: {
+    header: "bg-[#908CFF]",
+    body: "bg-[#908CFF]",
+    buyButtonGradient: {
+      background: "linear-gradient(91deg, #FFF -43.8%, #6E69FF 22.19%, #231BFF 99.18%)"
+    }
+  },
+  pink: {
+    header: "bg-[#FF51F3]",
+    body: "bg-[#FF51F3]",
+    buyButtonGradient: {
+      background: "linear-gradient(91deg, #FFF -43.8%, #F800E8 22.19%, #73006C 99.18%)"
+    }
+  },
+  StyleButton: {
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
+    borderRadius: "50px"
+  },
+  Images: {
+    1: { src: "/lotteryCards/boxWithCoupons.svg", alt: "box with coupons" },
+    2: { src: "/lotteryCards/coinsBox.svg", alt: "coins box" },
+    3: { src: "/lotteryCards/coupons.svg", alt: "coupons" },
+    4: { src: "/giftBoxImage.svg", alt: "gift box" },
+    5: { src: "/lotteryCards/walletWithCoins.svg", alt: "wallet with coins" }
+  }
+};
+
 
 export default function LotteryCard({ lottery, onClick }) {
+  const [randomImage] = useState(() => {
+    const keys = Object.keys(colorClasses.Images);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    return colorClasses.Images[randomKey];
+  });
+
+  const { header, body, buyButtonGradient } = colorClasses[lottery.color] || colorClasses.blue;
+  const buttonStyle = colorClasses.StyleButton;
+
   return (
     <div
-      className={`bg-gradient-to-br ${colorClasses[lottery.color]} rounded-2xl p-6 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200 shadow-lg`}
+      className={`bg-gradient-to-br ${body} rounded-4xl  text-white cursor-pointer transform hover:scale-105 transition-transform duration-200 shadow-lg `}
       onClick={() => onClick(lottery)}
     >
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">🏆 Prize Pot</div>
-        <div className="text-right">
-          <div className="text-2xl font-bold">{lottery.prizePot}</div>
-          <div className="text-sm opacity-80">ETH</div>
+      <div className={`flex justify-between items-center mb-4 ${header} rounded-4xl relative w-full p-4`}>
+
+        <div className="flex flex-col items-start justify-center">
+
+          <div className=" flex rounded-full px-3 py-1 text-md gap-1 items-center"><img src="/lotteryCards/Stats/prizePot.svg" alt="Lottery Id" className="h-5" /> Prize Pot</div>
+
+          <div className="text-right px-3 py-1">
+            <p className="text-6xl font-semibold ">{lottery.prizePot}<sub className="text-sm align-sub relative bottom-3 right-2">ETH</sub></p>
+          </div>
+
         </div>
+
+        {/* Decorative Image */}
+        <div className="flex justify-center mb-4">
+          <img src={randomImage.src} alt={randomImage.alt} className="w-30 h-30 object-contain" />
+        </div>
+
+
+        {/* Check History button */}
+        <div className="text-center mb-4 absolute bottom-[-4vh] right-5">
+          <button
+            className="text-white hover:bg-white/20 text-xs px-4 py-1 rounded-full border-1 border-white"
+            style={buttonStyle}
+          >
+            Check history
+          </button>
+        </div>
+
+
       </div>
 
-      {/* Decorative Icon */}
-      <div className="flex justify-center mb-4">
-        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-          <span className="text-2xl">🎲</span>
-        </div>
-      </div>
 
-      {/* Check History button */}
-      <div className="text-center mb-4">
-        <button variant="ghost" size="sm" className="text-white hover:bg-white/20 text-xs">
-          Check history
-        </button>
-      </div>
 
       {/* Details */}
-      <div className="space-y-2 text-sm">
+      <div className={`space-y-2 text-sm {$body} p-4`}>
         <div className="flex justify-between">
-          <span className="opacity-80">🎫 LotteryId</span>
-          <span className="font-semibold">#{lottery.id}</span>
+          <span className="opacity-80 flex gap-1 "><img src="/lotteryCards/Stats/lotteryId.svg" alt="Lottery Id" className="h-5" />  LotteryId</span>
+          <span className="font-semibold ">{`#${lottery.id}`}</span>
         </div>
         <div className="flex justify-between">
-          <span className="opacity-80">👤 LotteryName</span>
+          <span className="opacity-80 flex gap-1"><img src="/lotteryCards/Stats/lotteryName.svg" alt="Lottery Name" className="h-5" /> LotteryName</span>
           <span className="font-semibold">{lottery.name}</span>
         </div>
         <div className="flex justify-between">
-          <span className="opacity-80">👥 Players</span>
+          <span className="opacity-80 flex gap-1"><img src="/lotteryCards/Stats/players.svg" alt="players" className="h-5" />  Players</span>
           <span className="font-semibold">{lottery.players}</span>
         </div>
         <div className="flex justify-between">
-          <span className="opacity-80">💰 Fees</span>
+          <span className="opacity-80 flex items-center gap-1"><img src="/lotteryCards/Stats/fees.svg" alt="Fees" className="h-5" />  Fees</span>
           <span className="font-semibold">{lottery.fees} ETH</span>
         </div>
         <div className="flex justify-between">
-          <span className="opacity-80">⛓️ Chain</span>
+          <span className="opacity-80 flex gap-1"><img src="/lotteryCards/Stats/chains.svg" alt="chain" className="h-5" />  Chain</span>
           <span className="font-semibold">{lottery.chain}</span>
         </div>
         <div className="flex justify-between">
-          <span className="opacity-80">⏰ Time Remaining</span>
+          <span className="opacity-80 flex gap-1"><img src="/lotteryCards/Stats/timer.svg" alt="time remaining" className="h-5" />  Time Remaining</span>
           <span className="font-semibold">{lottery.timeRemaining}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="opacity-80">🏆 Last winner</span>
+        <div className="flex justify-between items-center">
+
+          <span className="opacity-80 flex gap-1"><img src="/lotteryCards/Stats/trophy.svg" alt="Last winner" className="h-5" />  Last winner</span>
           <span className="font-semibold">{lottery.lastWinner}</span>
         </div>
       </div>
 
       {/* Buy Tickets button */}
-      <button className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white border-none">Buy tickets</button>
+      <div className="flex justify-center ">
+        <button
+          className={`w-14/15 my-4 px-10 py-3 text-black rounded-full ${buyButtonGradient}`}
+          style={{ ...buttonStyle, ...buyButtonGradient }}
+        >
+          Buy tickets
+        </button>
+
+      </div>
     </div>
-  )
+  );
 }

@@ -8,6 +8,7 @@ const NavigationBar = () => {
 
             <div className="flex items-center">
 
+                <Link href="/">
                 <div className="flex items-center space-x-4">
                     <Image
                         src="/Logo.svg"
@@ -18,6 +19,7 @@ const NavigationBar = () => {
                     />
                     <span className="text-xl font-bold">LuckyChain</span>
                 </div>
+                </Link>
 
                 <div className="flex gap-12 border-l border-white/10 pl-5 ml-6">
                     <Link href="/lotteries" className="hover:text-gray-200">

@@ -10,7 +10,7 @@ const mockLotteries = [
   {
     id: "457",
     name: "Community Fox",
-    prizePot: 3.15,
+    prizePot: 3.17,
     players: 70,
     fees: 0.005,
     chain: "Ethereum",
@@ -21,7 +21,7 @@ const mockLotteries = [
   {
     id: "458",
     name: "Community Tiger",
-    prizePot: 3.15,
+    prizePot: 3.17,
     players: 85,
     fees: 0.005,
     chain: "Ethereum",
@@ -32,7 +32,7 @@ const mockLotteries = [
   {
     id: "459",
     name: "Community Wolf",
-    prizePot: 3.15,
+    prizePot: 3.17,
     players: 92,
     fees: 0.005,
     chain: "Ethereum",
@@ -43,7 +43,7 @@ const mockLotteries = [
   {
     id: "460",
     name: "Community Bear",
-    prizePot: 3.15,
+    prizePot: 3.17,
     players: 65,
     fees: 0.005,
     chain: "Ethereum",
@@ -54,7 +54,7 @@ const mockLotteries = [
   {
     id: "461",
     name: "Community Eagle",
-    prizePot: 3.15,
+    prizePot: 3.17,
     players: 78,
     fees: 0.005,
     chain: "Ethereum",
@@ -65,7 +65,7 @@ const mockLotteries = [
   {
     id: "462",
     name: "Community Lion",
-    prizePot: 3.15,
+    prizePot: 3.17,
     players: 88,
     fees: 0.005,
     chain: "Ethereum",
@@ -128,7 +128,7 @@ export default function LotteryPage() {
         />
 
         {/* Lottery Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 mx-20">
           {filteredLotteries.slice(0, visibleLotteries).map((lottery) => (
             <LotteryCard key={lottery.id} lottery={lottery} onClick={handleLotteryClick} />
           ))}
