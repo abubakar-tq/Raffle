@@ -3,24 +3,7 @@
 
 import { useState } from "react";
 
-const BuyTicketsPopup = () => {
-
-    const lottery = {
-        id: "457",
-        name: "Community Fox",
-        prizePot: 3.17,
-        players: 70,
-        fees: 0.005,
-        chain: "Ethereum",
-        timeRemaining: "45:24:32",
-        lastWinner: "-",
-        color: "blue",
-    }
-    const onClose = () => {
-        // Placeholder for closing the popup
-        console.log("Popup closed");
-    };
-
+const BuyTicketsPopup = ({ lottery, onClose }) => {
 
 
 
@@ -35,7 +18,7 @@ const BuyTicketsPopup = () => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-transparent backdrop-blur-sm bg-opacity-60 flex items-center justify-center z-50 top-[-50]">
             <div className={`w-[60vh] p-12 relative`} style={{
                 background: "linear-gradient(146deg, #FFF -8.79%, #73C5FF 19.56%, #0067A2 56.73%)",
                 boxShadow: " 0 4px 10px 0 rgba(0, 0, 0, 0.25)"
@@ -117,7 +100,7 @@ const BuyTicketsPopup = () => {
                         Confirm Transaction
                     </button>
 
-                    
+
                 </div>
             </div>
         </div >

@@ -4,6 +4,8 @@ import { useState } from "react"
 import LotteryBanner from "@/components/LotteryBanner"
 import LotteryCard from "@/components/LotteryCard"
 import LotterySearchFilter from "@/components/LotterySearchFilter"
+import BuyTicketPopup from "@/components/BuyTicketsPopup"
+import LotteryHistoryUser from "@/components/LotteryHistoryUser"
 
 // Mock data
 const mockLotteries = [
@@ -90,6 +92,27 @@ export default function LotteryPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [visibleLotteries, setVisibleLotteries] = useState(6)
 
+  const [isBuyPopupOpen, setIsBuyPopupOpen] = useState(false);
+  const [isHistoryPopupOpen, setIsHistoryPopupOpen] = useState(false);
+
+  const handleOpenBuyPopup = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => setIsBuyPopupOpen(true), 500);
+
+  };
+
+  const handleCloseBuyPopup = () => {
+    setIsBuyPopupOpen(false);
+  };
+  const handleOpenHistoryPopup = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => setIsHistoryPopupOpen(true), 500); // Adjust delay to match scroll duration
+    ;
+  };
+  const handleCloseHistoryPopup = () => {
+    setIsHistoryPopupOpen(false);
+  };
+
   const filteredLotteries = mockLotteries.filter(
     (lottery) => lottery.name.toLowerCase().includes(searchTerm.toLowerCase()) || lottery.id.includes(searchTerm)
   )
@@ -117,21 +140,34 @@ export default function LotteryPage() {
       <div className="max-w-7xl mx-auto">
         {/* Banner Section */}
         <div className="mb-12">
-          <LotteryBanner lottery={selectedLottery} />
+          <LotteryBanner lottery={selectedLottery} handleCloseBuyPopup={handleCloseBuyPopup}
+            handleOpenBuyPopup={handleOpenBuyPopup} />
+          {isBuyPopupOpen ? <BuyTicketPopup onClose={handleCloseBuyPopup} lottery={selectedLottery} /> : null
+          }
+
         </div>
 
         {/* Search and Filter */}
+        <div className="flex justify-between items-center mb-8 mx-20">
+          
+         <h1 className="text-2xl font-bold text-white">All Lotteries</h1>
         <LotterySearchFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onFilterClick={() => console.log("Filter clicked")}
+          className="text-[#585858]  bg-[#FFFFFF] border-white"
+          inputClassName="bg-white/10 border-white/20 text-white"
+          FilterClassName="text-[#585858]  bg-[#FFFFFF] border-white"
         />
+        </div>
 
         {/* Lottery Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 mx-20">
           {filteredLotteries.slice(0, visibleLotteries).map((lottery) => (
-            <LotteryCard key={lottery.id} lottery={lottery} onClick={handleLotteryClick} />
+            <LotteryCard key={lottery.id} lottery={lottery} onClick={handleLotteryClick} handleOpenHistoryPopup={handleOpenHistoryPopup} handleOpenBuyPopup={handleOpenBuyPopup} />
           ))}
+
+          {isHistoryPopupOpen ? <LotteryHistoryUser handleCloseHistoryPopup={handleCloseHistoryPopup} /> : null}
         </div>
 
         {/* Load More Button */}

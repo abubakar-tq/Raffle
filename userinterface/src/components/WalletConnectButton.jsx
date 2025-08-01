@@ -2,9 +2,11 @@
 
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { useEffect, useState } from "react";
+import useWalletStore from "../lib/useWalletStore";
 
 export default function WalletConnectButton({ className = "", type = "" }) {
   const [isMounted, setIsMounted] = useState(false);
+  const { updateWallet } = useWalletStore();
 
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
@@ -14,6 +16,11 @@ export default function WalletConnectButton({ className = "", type = "" }) {
     setIsMounted(true);
   }, []);
 
+  const handleDisconnect = () => {
+    disconnect();
+    updateWallet({ isConnected: false, isAdmin: false, address: null });
+  };
+
   if (!isMounted) return <div style={{ height: "42px" }} />;
 
   const metaMaskConnector = connectors.find((c) => c.id === "metaMaskSDK");
@@ -21,8 +28,8 @@ export default function WalletConnectButton({ className = "", type = "" }) {
   if (isConnected) {
     return (
       <button
-        onClick={() => disconnect()}
-        className={`px-4 py-2 bg-gray-500 text-white rounded-full ${className}`}
+        onClick={handleDisconnect}
+        className={`px-4 py-2 bg-white text-black rounded-full ${className}`}
       >
         Disconnect ({address.slice(0, 6)}...{address.slice(-4)})
       </button>

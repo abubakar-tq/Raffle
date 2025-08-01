@@ -60,7 +60,7 @@ const colorClasses = {
 };
 
 
-export default function LotteryCard({ lottery, onClick }) {
+export default function LotteryCard({ lottery, onClick, handleOpenHistoryPopup, handleOpenBuyPopup }) {
   const [randomImage] = useState(() => {
     const keys = Object.keys(colorClasses.Images);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
@@ -99,6 +99,7 @@ export default function LotteryCard({ lottery, onClick }) {
           <button
             className="text-white hover:bg-white/20 text-xs px-4 py-1 rounded-full border-1 border-white"
             style={buttonStyle}
+            onClick={  handleOpenHistoryPopup }
           >
             Check history
           </button>
@@ -147,6 +148,7 @@ export default function LotteryCard({ lottery, onClick }) {
         <button
           className={`w-14/15 my-4 px-10 py-3 text-black rounded-full ${buyButtonGradient}`}
           style={{ ...buttonStyle, ...buyButtonGradient }}
+          onClick={handleOpenBuyPopup}
         >
           Buy tickets
         </button>

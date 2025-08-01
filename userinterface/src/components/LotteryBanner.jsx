@@ -4,7 +4,7 @@ import LotteryTimer from "./LotteryTimer"
 import Image from "next/image";
 import BuyYourTicketsButton from "./BuyYourTicketsButton";
 
-export default function LotteryBanner({ lottery }) {
+export default function LotteryBanner({ lottery, handleCloseBuyPopup, handleOpenBuyPopup }) {
     return (
         <div
             className="relative h-[75vh] w-[97vw] flex items-center justify-center rounded-4xl  mt-2"
@@ -64,7 +64,8 @@ export default function LotteryBanner({ lottery }) {
                         <div className="text-white text-5xl font-bold mb-2">#{lottery.id}</div>
                         <div className="text-white/80 text-md mb-1 font-semibold">Lottery name</div>
                         <div className="text-white text-5xl font-semibold mb-4">{lottery.name}</div>
-                        <BuyYourTicketsButton />
+                        <BuyYourTicketsButton onClick={handleOpenBuyPopup} />
+                        
                     </div>
 
 

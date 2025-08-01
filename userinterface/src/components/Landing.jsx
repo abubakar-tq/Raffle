@@ -2,7 +2,7 @@ import Image from 'next/image';
 import CryptoIcon from './CryptoIcon'; // Adjust the import path
 import LotteryStats from './LotteryStats'
 import FeatureCard from './FeatureCard';
-import Footer from './Footer'; // Adjust the import path
+
 import LotteryHistoryTable from './LotteryHistoryTable';
 import BuyYourTicketsButton from './BuyYourTicketsButton';
 
