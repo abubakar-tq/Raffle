@@ -38,6 +38,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
     //Events
     event RaffleEntered(address indexed player);
     event WinnerPicked(address indexed player, uint256 amount, uint256 timestamp);
+    event RaffleOpened(uint256 indexed timestamp);
     event RequestedRaffleWinner(uint256 indexed requestId);
 
     constructor(
@@ -52,7 +53,7 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         i_timeInterval = timeInterval;
         i_keyHash = gasLane;
         i_subscriptionId = subscriptionId;
-        i_callbackGasLimit = callbackGasLimit/2;
+        i_callbackGasLimit = callbackGasLimit / 2;
         i_owner = msg.sender;
 
         s_lastTimeStamp = block.timestamp;
@@ -155,6 +156,9 @@ contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
         }
         s_raffleState = RaffleState.OPEN;
         s_lastTimeStamp = block.timestamp;
+        s_recentWinner = payable(address(0));
+
+        emit RaffleOpened(s_lastTimeStamp);
     }
 
     function getRaffleState() external view returns (RaffleState) {

@@ -21,7 +21,7 @@ contract RaffleFactory is ConfirmedOwner {
     error RaffleFactory_PlayerAddressZero();
     error RaffleFactory_WithdrawFailed();
 
-    event RaffleCreated(uint256 indexed raffleId, address indexed raffleAddress, string name);
+    event RaffleCreated(uint256 indexed raffleId, address indexed raffleAddress, string indexed name);
     event ETHReceived(address indexed sender, uint256 amount);
     event ETHWithdrawn(address indexed recipient, uint256 amount);
 
@@ -59,26 +59,21 @@ contract RaffleFactory is ConfirmedOwner {
             revert RaffleFactory_RaffleAlreadyExists(name);
         }
 
-        if (s_subscriptionId == 0) {
-            createVRFSubscription();
-        }
-
         Raffle raffle =
             new Raffle(entranceFee, timeInterval, s_vrfCoordinator, s_subscriptionId, s_gasLane, s_callbackGasLimit);
 
         idToRaffle[s_raffleCount] = address(raffle);
         nameToRaffle[name] = address(raffle);
 
-        addConsumerToSubscription(s_raffleCount);
-        // Register upkeep
-        uint256 upkeepId = registerUpKeep(s_raffleCount, name);
-        raffleToUpkeepId[s_raffleCount] = upkeepId;
+        if (s_subscriptionId != 0) {
+            addConsumerToSubscription(s_raffleCount);
+        }
 
         s_raffleCount++;
         emit RaffleCreated(s_raffleCount - 1, address(raffle), name);
     }
 
-    function createVRFSubscription() internal onlyOwner {
+    function createVRFSubscription() external onlyOwner {
         uint256 subscriptionId = VRFCoordinatorV2_5Mock(s_vrfCoordinator).createSubscription();
         setSubscriptionId(subscriptionId);
     }
@@ -91,7 +86,7 @@ contract RaffleFactory is ConfirmedOwner {
         LinkToken(s_linkToken).transferAndCall(s_vrfCoordinator, amount, abi.encode(s_subscriptionId));
     }
 
-    function addConsumerToSubscription(uint256 raffleId) internal {
+    function addConsumerToSubscription(uint256 raffleId) public onlyOwner {
         Raffle raffle = Raffle(idToRaffle[raffleId]);
 
         VRFCoordinatorV2_5Mock(s_vrfCoordinator).addConsumer(s_subscriptionId, address(raffle));
@@ -101,7 +96,7 @@ contract RaffleFactory is ConfirmedOwner {
         s_subscriptionId = subscriptionId;
     }
 
-    function registerUpKeep(uint256 raffleId, string memory name) internal returns (uint256) {
+    function registerUpKeep(uint256 raffleId, string memory name) external onlyOwner returns (uint256) {
         Raffle raffle = Raffle(idToRaffle[raffleId]);
         if (address(raffle) == address(0)) {
             revert RaffleFactory_RaffleDoesNotExist(raffleId);
@@ -123,6 +118,8 @@ contract RaffleFactory is ConfirmedOwner {
         });
 
         uint256 upKeepId = AutomationRegistrarInterface(s_automationRegistrar).registerUpkeep(config);
+
+        raffleToUpkeepId[raffleId] = upKeepId;
 
         return upKeepId;
     }

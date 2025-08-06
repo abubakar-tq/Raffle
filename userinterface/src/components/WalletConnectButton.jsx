@@ -3,6 +3,8 @@
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { useEffect, useState } from "react";
 import useWalletStore from "../lib/useWalletStore";
+import { useWalletAuth } from "../lib/auth"; // Import the custom hook for wallet authentication
+import { useRouter } from "next/navigation";
 
 export default function WalletConnectButton({ className = "", type = "" }) {
   const [isMounted, setIsMounted] = useState(false);
@@ -11,20 +13,69 @@ export default function WalletConnectButton({ className = "", type = "" }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { connect, connectors, isPending, pendingConnector, error } = useConnect();
+  const router = useRouter();
+  const { login,logout,supabase } = useWalletAuth(); // Use the custom hook for 
+  // wallet authentication
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const handleDisconnect = () => {
-    disconnect();
-    updateWallet({ isConnected: false, isAdmin: false, address: null });
+ 
+ const handleDisconnect = async () => {
+    try {
+      disconnect();
+      await logout();
+      updateWallet({ isConnected: false, isAdmin: false, address: null });
+      router.push("/"); // Redirect to home page
+    } catch (error) {
+      console.error("Disconnect failed:", error);
+    }
   };
+
+  const handleConnect = async () => {
+   
+    const metaMaskConnector = connectors.find((c) => c.id === "metaMaskSDK");
+    if (!metaMaskConnector) {
+      console.error("MetaMask connector not found");
+      return;
+    }
+    try {
+       connect(
+        { connector: metaMaskConnector },
+        {
+          onSuccess: async (data) => {
+            const walletAddress = data.accounts[0];
+            console.log("Connected wallet:", walletAddress);
+            const token = await login(walletAddress);
+            if (!token) {
+              console.error("Login failed, no token received");
+              return;
+            }
+            else{
+              console.log("Login successful, token received:", token);
+            }
+
+
+
+
+            
+
+           
+            console.log("Connection and login successful");
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Connect failed:", error);
+    }
+  };
+
+  
 
   if (!isMounted) return <div style={{ height: "42px" }} />;
 
-  const metaMaskConnector = connectors.find((c) => c.id === "metaMaskSDK");
-
+  
   if (isConnected) {
     return (
       <button
@@ -38,7 +89,7 @@ export default function WalletConnectButton({ className = "", type = "" }) {
 
   return (
     <button
-      onClick={() => connect({ connector: metaMaskConnector })}
+      onClick={handleConnect}
       type={type}
       disabled={isPending}
       className={`px-4 py-2 bg-white text-black rounded-full ${className} ${

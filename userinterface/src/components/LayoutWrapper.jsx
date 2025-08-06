@@ -13,14 +13,20 @@ export default function LayoutWrapper({ children }) {
 
   const { isAdmin, updateWallet } = useWalletStore();
 
+  // useEffect(() => {
+  //   const adminAddress = "0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66";
+  //   updateWallet({
+  //     isConnected,
+  //     isAdmin: isConnected && address?.toLowerCase() === adminAddress.toLowerCase(),
+  //     address,
+  //   });
+  // }, [address, isConnected, updateWallet]);
+
   useEffect(() => {
-    const adminAddress = "0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66";
-    updateWallet({
-      isConnected,
-      isAdmin: isConnected && address?.toLowerCase() === adminAddress.toLowerCase(),
-      address,
-    });
-  }, [address, isConnected, updateWallet]);
+    if (!isConnected || !address) {
+      useWalletStore.getState().clearTokens();
+    }
+  }, [isConnected, address]);
 
 
 
@@ -38,28 +44,28 @@ export default function LayoutWrapper({ children }) {
           <Footer />
         </>
       ) : (
-       
-          <>
-            <NavigationBar
-              className=" "
-              navFirstOption="Overview"
-              navSecondOption="Active"
-              navThirdOption="History"
-              path="/admin"
-              />
 
-              <div className="flex p-4">
+        <>
+          <NavigationBar
+            className=" "
+            navFirstOption="Overview"
+            navSecondOption="Active"
+            navThirdOption="History"
+            path="/admin"
+          />
 
-              <AdminSidebar />
+          <div className="flex p-4">
 
-              <div className="py-6 ps-16 pe-4 flex-1">
+            <AdminSidebar />
+
+            <div className="py-6 ps-16 pe-4 flex-1">
 
               {children}
-              </div>
-              </div>
-           
-            </>
-         
+            </div>
+          </div>
+
+        </>
+
       )}
     </>
   );

@@ -19,9 +19,6 @@ const ActivePage = () => {
 
     
     
-    
-   
-
 
 
     return (

@@ -6,6 +6,7 @@ const BuyYourTicketsButton = ({ onClick }) => {
             Buy your tickets
           </button>
     );
+    
 }
 
 export default BuyYourTicketsButton;

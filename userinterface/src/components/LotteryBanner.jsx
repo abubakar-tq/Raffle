@@ -72,25 +72,25 @@ export default function LotteryBanner({ lottery, handleCloseBuyPopup, handleOpen
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2  gap-4 w-1/3 mt-6 h-3/4">
+                <div className="grid grid-cols-2 gap-4 w-1/3 mt-6 h-3/4">
 
 
-                    <div className="bg-[#38B4FF]/30  rounded-lg px-4 py-8 text-center flex flex-col items-start justify-between " style={{ "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }}>
+                    <div className="bg-[#38B4FF]/30  rounded-lg px-4 py-8 text-center flex flex-col items-start justify-between " style={{ "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }}>
                         <p className="text-white/80  text-2xl mb-1">Players</p>
                         <p className="text-white text-2xl font-medium">{lottery.players}</p>
                     </div>
 
-                    <div className="bg-[#8CD0FF]/40  rounded-lg px-4 py-8 text-center flex flex-col items-start justify-between " style={{ "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }}>
+                    <div className="bg-[#8CD0FF]/40  rounded-lg px-4 py-8 text-center flex flex-col items-start justify-between " style={{ "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }}>
                         <p className="text-white/80  mb-1 text-2xl">Total Balance</p>
                         <p className="text-white text-2xl font-medium">{lottery.totalBalance} ETH</p>
                     </div>
 
-                    <div className="bg-[#1279BF]/30  rounded-lg px-4 py-8  text-center flex flex-col items-start justify-between" style={{ "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }} >
+                    <div className="bg-[#1279BF]/30  rounded-lg px-4 py-8  text-center flex flex-col items-start justify-between" style={{ "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }} >
                         <p className="text-white/80  mb-1 text-2xl">Fees</p>
                         <p className="text-white text-2xl font-medium">{lottery.fees} ETH</p>
                     </div>
 
-                    <div className="bg-[#8CD0FF]/40  rounded-lg px-4 py-8  text-center flex flex-col items-start justify-between " style={{ "box-shadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }}>
+                    <div className="bg-[#8CD0FF]/40  rounded-lg px-4 py-8  text-center flex flex-col items-start justify-between " style={{ "boxShadow": "0px 4px 10px rgba(0, 0, 0, 0.25)" }}>
                         <p className="text-white/80  mb-1 text-2xl">Win Prediction</p>
                         <p className="text-white text-2xl font-medium">{lottery.winPrediction}%</p>
                     </div>,

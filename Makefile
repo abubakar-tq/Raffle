@@ -64,10 +64,10 @@ fundSubscription:
 	@forge script script/Interaction.s.sol:FundSubscription $(NETWORK_ARGS)
 
 createRaffle:
-	cast send $(RAFFLE_FACTORY_ADDRESS) "CreateRaffle(string memory,uint256,uint256)" "Test Raffle" 1000000000000000 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
+	cast send $(RAFFLE_FACTORY_ADDRESS) "CreateRaffle(string memory,uint256,uint256)" "Test Raffle" 1000000000000000 180 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
 
 createRaffleSepolia:
-	cast send $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "CreateRaffle(string memory,uint256,uint256)" "Test Raffle Sepolia" 1000000000000000 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
+	cast send $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "CreateRaffle(string memory,uint256,uint256)" "Raffle S" 1000000000000000 600 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
 
 
 getRaffle:
@@ -80,19 +80,24 @@ enterRaffle:
 	cast send "0x27D668603c635f85A667149a8b10ad4729F75A34" "enterRaffle()"  --value 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
 
 enterRaffleSepolia:
-	cast send "0x4B7F3Db2621cfDCE7c9d652d8287c02003E5Fef1" "enterRaffle()" --value 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
+	cast send "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "enterRaffle()" --value 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
 
 getRaffleStateSepolia:
-	cast call "0x4B7F3Db2621cfDCE7c9d652d8287c02003E5Fef1" "getRaffleState()"  --rpc-url $(SEPOLIA_RPC_URL) 
+	cast call "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "getRaffleState()" --rpc-url $(SEPOLIA_RPC_URL) 
+
+getRaffleTimeLeftSepolia:
+	cast call "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "getTimeLeft()" --rpc-url $(SEPOLIA_RPC_URL) 
 
 checkUpKeepSeplia:
-	cast call "0x4B7F3Db2621cfDCE7c9d652d8287c02003E5Fef1" "checkUpkeep(bytes memory)" 0x --rpc-url $(SEPOLIA_RPC_URL)
+	cast call "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "checkUpkeep(bytes memory)" 0x --rpc-url $(SEPOLIA_RPC_URL)
 
+upKeepSepolia:
+	cast send "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "performUpkeep(bytes memory)" 0x --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
 
 
 
 getPlayersSepolia:
-	cast call $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "getPlayersTotalTickets(uint256,address)" 0 $(SEP_ACC)--rpc-url $(SEPOLIA_RPC_URL)
+	cast call $(RAFFLE_FACTORY_ADDRESS_SEPOLIA) "getPlayersTotalTickets(uint256,address)" 3 $(SEP_ACC) --rpc-url $(SEPOLIA_RPC_URL)
 
 
 getPlayers:
