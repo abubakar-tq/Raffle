@@ -7,6 +7,7 @@ import useWalletStore from "../lib/useWalletStore";
 import NavigationBar from "@/components/NavigationBar";
 import AdminSidebar from "@/components/admin/Sidebar";
 import Footer from "@/components/Footer";
+import RaffleEventListener from "@/lib/eventListeners";
 
 export default function LayoutWrapper({ children }) {
   const { address, isConnected } = useAccount();
@@ -32,6 +33,7 @@ export default function LayoutWrapper({ children }) {
 
   return (
     <>
+      <RaffleEventListener />
       {!isAdmin ? (
         <>
           <NavigationBar
