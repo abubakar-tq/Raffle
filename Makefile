@@ -45,7 +45,7 @@ anvil :; anvil -m 'test test test test test test test test test test test junk' 
 NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast -vvvv
 
 
-deploy-sepolia:; @forge script script/DeployRaffleFactory.s.sol:DeployRaffleFactory --rpc-url $(SEPOLIA_RPC_URL) --account sepkey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+deploy-sepolia:; forge script script/DeployRaffleFactory.s.sol:DeployRaffleFactory --rpc-url $(SEPOLIA_RPC_URL) --account sepkey --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
 deploy-anvil:
 	forge script script/DeployRaffleFactory.s.sol:DeployRaffleFactory $(NETWORK_ARGS)
@@ -80,10 +80,13 @@ enterRaffle:
 	cast send "0x27D668603c635f85A667149a8b10ad4729F75A34" "enterRaffle()"  --value 1000000000000000 --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) -vvvvv
 
 enterRaffleSepolia:
-	cast send "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "enterRaffle()" --value 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
+	cast send "0x2319Fa6F046929f5cA3B97A78BD0486544fdF231" "enterRaffle()" --value 1000000000000000 --rpc-url $(SEPOLIA_RPC_URL) --account sepkey -vvvvvv
 
 getRaffleStateSepolia:
-	cast call "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "getRaffleState()" --rpc-url $(SEPOLIA_RPC_URL) 
+	cast call "0x97FA4BB76375825223875D873Da62838aa281447" "getRaffleState()" --rpc-url $(SEPOLIA_RPC_URL) 
+
+getEntraceFeeSepolia:
+	cast call "0x08fff9d526ebc327282d3f24cc596055fe29ab88" "getEntranceFee()" --rpc-url $(SEPOLIA_RPC_URL)
 
 getRaffleTimeLeftSepolia:
 	cast call "0x9f38bd12a8fca91ed36c2cc3f87fe94532f31ead" "getTimeLeft()" --rpc-url $(SEPOLIA_RPC_URL) 

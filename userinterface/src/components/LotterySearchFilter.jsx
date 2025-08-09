@@ -16,7 +16,7 @@ export default function LotterySearchFilter({ searchTerm, onSearchChange, onFilt
             placeholder="Search"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className={`pl-10  placeholder:text-gray-400 w-64 text-white outline-none focus:outline-none focus:ring-0 focus:border-none ${inputClassName}`}
+            className={`pl-10 placeholder:text-gray-400 w-64 text-black outline-none focus:outline-none focus:ring-0 focus:border-none ${inputClassName}`}
           />
         </div>
 

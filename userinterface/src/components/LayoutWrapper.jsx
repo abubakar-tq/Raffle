@@ -12,7 +12,19 @@ import RaffleEventListener from "@/lib/eventListeners";
 export default function LayoutWrapper({ children }) {
   const { address, isConnected } = useAccount();
 
-  const { isAdmin, updateWallet } = useWalletStore();
+  const { isAdmin, updateWallet,raffl } = useWalletStore();
+
+  const fetchRaffleContracts = useWalletStore(state => state.fetchRaffleContracts);
+
+useEffect(() => {
+  async function loadContracts() {
+    console.log("Fetching the raffle Contracts");
+    await fetchRaffleContracts();
+    console.log("Fetched the raffle Contracts");
+  }
+  loadContracts();
+}, [fetchRaffleContracts]);
+
 
   // useEffect(() => {
   //   const adminAddress = "0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66";

@@ -1,6 +1,10 @@
+"use client"
+
 import AdminTable from "./AdminTable";
 import { TrendingUp } from "lucide-react"
 import UserTicketsSoldGraph from "./UserTicketsSoldGraph";
+import useWalletStore from "@/lib/useWalletStore";
+import { formatRemainingTime } from "@/lib/utils";
 
 const activeLotteryData = [
   { "Lottery Id": "L011", "Lottery Name": "Spring Raffle", Entries: 160, "Total Balance": "2.7 ETH", "Time Remaining": "1d 8h", Status: "Open" },
@@ -18,6 +22,35 @@ const Overview = () => {
     "Entries": 5000,
     "Total Revenue": 10000
   }
+
+  //Fetch the lottery Data from zustand
+    const raffleContracts = useWalletStore(state => state.raffleContracts);
+    const openRaffles = raffleContracts.filter(r => r.is_open);
+
+    if (!openRaffles || openRaffles.length === 0) {
+      return <div>No active lotteries found.</div>;
+    }
+
+    const activeLotteryData = openRaffles.map(r => {
+    const lastOpened = new Date(r.last_opened_at).getTime();
+    const intervalMs = r.time_interval * 1000;
+    const now = Date.now();
+
+    const remainingMs = Math.max(lastOpened + intervalMs - now, 0);
+
+    return {
+      id: r.raffle_id,
+      name: r.name,
+      total_entries: r.total_entries,
+      total_balance: r.total_balance + " ETH",
+      formatted_remaining_time: formatRemainingTime(remainingMs),
+      status: r.is_open? "Open" : "CLOSED"
+    };
+      });
+
+      console.log("Active Lottery Data:", activeLotteryData)
+
+
 
 
   return (
@@ -80,14 +113,14 @@ const Overview = () => {
               <div className="flex items-center gap-2 mt-2 text-sm">
 
                 <p className="border-[#40FF4D] bg-[#00990A] rounded-xl flex items-center gap-2 px-3 py-1"> +2.2%
-                  <TrendingUp size={20}/>  </p>
+                  <TrendingUp size={20} />  </p>
                 <p className="text-[#FFFFFF99]">In November</p>
               </div>
             </div>
           </div>
         </div>
 
-        <UserTicketsSoldGraph/>
+        <UserTicketsSoldGraph />
 
 
 
@@ -103,7 +136,7 @@ const Overview = () => {
       </div>
 
 
-      
+
 
 
     </div>

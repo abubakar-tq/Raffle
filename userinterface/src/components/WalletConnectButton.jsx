@@ -6,6 +6,7 @@ import useWalletStore from "../lib/useWalletStore";
 import { useWalletAuth } from "../lib/auth"; // Import the custom hook for wallet authentication
 import { useRouter } from "next/navigation";
 
+
 export default function WalletConnectButton({ className = "", type = "" }) {
   const [isMounted, setIsMounted] = useState(false);
   const { updateWallet } = useWalletStore();
@@ -14,15 +15,15 @@ export default function WalletConnectButton({ className = "", type = "" }) {
   const { disconnect } = useDisconnect();
   const { connect, connectors, isPending, pendingConnector, error } = useConnect();
   const router = useRouter();
-  const { login,logout,supabase } = useWalletAuth(); // Use the custom hook for 
+  const { login, logout, supabase } = useWalletAuth(); // Use the custom hook for 
   // wallet authentication
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
- 
- const handleDisconnect = async () => {
+
+  const handleDisconnect = async () => {
     try {
       disconnect();
       await logout();
@@ -34,34 +35,28 @@ export default function WalletConnectButton({ className = "", type = "" }) {
   };
 
   const handleConnect = async () => {
-   
+
     const metaMaskConnector = connectors.find((c) => c.id === "metaMaskSDK");
     if (!metaMaskConnector) {
       console.error("MetaMask connector not found");
       return;
     }
     try {
-       connect(
+      connect(
         { connector: metaMaskConnector },
         {
           onSuccess: async (data) => {
             const walletAddress = data.accounts[0];
             console.log("Connected wallet:", walletAddress);
             const token = await login(walletAddress);
+            // setupRaffleEventWatchers()
             if (!token) {
               console.error("Login failed, no token received");
               return;
             }
-            else{
+            else {
               console.log("Login successful, token received:", token);
             }
-
-
-
-
-            
-
-           
             console.log("Connection and login successful");
           },
         }
@@ -71,11 +66,11 @@ export default function WalletConnectButton({ className = "", type = "" }) {
     }
   };
 
-  
+
 
   if (!isMounted) return <div style={{ height: "42px" }} />;
 
-  
+
   if (isConnected) {
     return (
       <button
@@ -92,9 +87,8 @@ export default function WalletConnectButton({ className = "", type = "" }) {
       onClick={handleConnect}
       type={type}
       disabled={isPending}
-      className={`px-4 py-2 bg-white text-black rounded-full ${className} ${
-        isPending ? "opacity-50" : ""
-      }`}
+      className={`px-4 py-2 bg-white text-black rounded-full ${className} ${isPending ? "opacity-50" : ""
+        }`}
     >
       {isPending ? "Connecting..." : "Connect Wallet"}
     </button>

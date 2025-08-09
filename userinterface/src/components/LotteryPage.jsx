@@ -156,7 +156,7 @@ export default function LotteryPage() {
           onSearchChange={setSearchTerm}
           onFilterClick={() => console.log("Filter clicked")}
           className="text-[#585858]  bg-[#FFFFFF] border-white"
-          inputClassName="bg-white/10 border-white/20 text-white"
+          inputClassName="bg-white/10 border-white/20 "
           FilterClassName="text-[#585858]  bg-[#FFFFFF] border-white"
         />
         </div>

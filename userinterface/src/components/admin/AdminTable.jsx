@@ -22,7 +22,7 @@ const AdminTable = ({ headers, data, lastColumnType = null }) => {
         if (!lastColumnType) return row[Object.keys(row)[Object.keys(row).length - 1]];
 
         if (lastColumnType === "status") {
-            const status = row.Status || "Unknown";
+            const status = row.status || "Unknown";
             const color = status === "Closed" ? "bg-[#A20000] border-[#FF4C4F]" : status === "Open" ? "bg-[#1EA200] border-[#32EE08]" : "";
             return <span className={`inline-block py-1 px-2 rounded-2xl border ${color}`}>{status}</span>;
         }

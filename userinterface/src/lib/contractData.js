@@ -1,5 +1,5 @@
 
-export const RAFFLE_FACTORY_ABI =  [
+export const RAFFLE_FACTORY_ABI = [
         {
             "type": "constructor",
             "inputs": [
@@ -32,6 +32,11 @@ export const RAFFLE_FACTORY_ABI =  [
                     "name": "automationRegistry",
                     "type": "address",
                     "internalType": "address"
+                },
+                {
+                    "name": "subscriptionId",
+                    "type": "uint256",
+                    "internalType": "uint256"
                 }
             ],
             "stateMutability": "nonpayable"
@@ -321,30 +326,6 @@ export const RAFFLE_FACTORY_ABI =  [
         },
         {
             "type": "function",
-            "name": "registerUpKeep",
-            "inputs": [
-                {
-                    "name": "raffleId",
-                    "type": "uint256",
-                    "internalType": "uint256"
-                },
-                {
-                    "name": "name",
-                    "type": "string",
-                    "internalType": "string"
-                }
-            ],
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "uint256",
-                    "internalType": "uint256"
-                }
-            ],
-            "stateMutability": "nonpayable"
-        },
-        {
-            "type": "function",
             "name": "setSubscriptionId",
             "inputs": [
                 {
@@ -477,7 +458,7 @@ export const RAFFLE_FACTORY_ABI =  [
                 {
                     "name": "name",
                     "type": "string",
-                    "indexed": true,
+                    "indexed": false,
                     "internalType": "string"
                 }
             ],
@@ -555,7 +536,11 @@ export const RAFFLE_FACTORY_ABI =  [
         }
     ];
 
-export const RAFFLE_ABI = [
+
+export const RAFFLE_FACTORY_ADDRESS = "0x85067B1Ef56e3E2Ae555017ae8536E4ECFf712e1";
+
+
+export const RAFFLE_ABI =  [
         {
             "type": "constructor",
             "inputs": [
@@ -588,6 +573,11 @@ export const RAFFLE_ABI = [
                     "name": "callbackGasLimit",
                     "type": "uint32",
                     "internalType": "uint32"
+                },
+                {
+                    "name": "raffleId",
+                    "type": "uint256",
+                    "internalType": "uint256"
                 }
             ],
             "stateMutability": "nonpayable"
@@ -626,7 +616,13 @@ export const RAFFLE_ABI = [
         {
             "type": "function",
             "name": "enterRaffle",
-            "inputs": [],
+            "inputs": [
+                {
+                    "name": "ticketCount",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
             "outputs": [],
             "stateMutability": "payable"
         },
@@ -752,6 +748,19 @@ export const RAFFLE_ABI = [
         },
         {
             "type": "function",
+            "name": "getRaffleId",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
             "name": "getRaffleState",
             "inputs": [],
             "outputs": [
@@ -817,7 +826,20 @@ export const RAFFLE_ABI = [
         },
         {
             "type": "function",
-            "name": "getTotalTickets",
+            "name": "getTotalEntries",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "getTotalPlayers",
             "inputs": [],
             "outputs": [
                 {
@@ -974,10 +996,22 @@ export const RAFFLE_ABI = [
             "name": "RaffleEntered",
             "inputs": [
                 {
+                    "name": "raffleId",
+                    "type": "uint256",
+                    "indexed": true,
+                    "internalType": "uint256"
+                },
+                {
                     "name": "player",
                     "type": "address",
                     "indexed": true,
                     "internalType": "address"
+                },
+                {
+                    "name": "ticketCount",
+                    "type": "uint256",
+                    "indexed": false,
+                    "internalType": "uint256"
                 }
             ],
             "anonymous": false
@@ -986,6 +1020,12 @@ export const RAFFLE_ABI = [
             "type": "event",
             "name": "RaffleOpened",
             "inputs": [
+                {
+                    "name": "raffleId",
+                    "type": "uint256",
+                    "indexed": true,
+                    "internalType": "uint256"
+                },
                 {
                     "name": "timestamp",
                     "type": "uint256",
@@ -1012,6 +1052,12 @@ export const RAFFLE_ABI = [
             "type": "event",
             "name": "WinnerPicked",
             "inputs": [
+                {
+                    "name": "raffleId",
+                    "type": "uint256",
+                    "indexed": true,
+                    "internalType": "uint256"
+                },
                 {
                     "name": "player",
                     "type": "address",
@@ -1072,6 +1118,11 @@ export const RAFFLE_ABI = [
         },
         {
             "type": "error",
+            "name": "Raffle_AmountCantBeZero",
+            "inputs": []
+        },
+        {
+            "type": "error",
             "name": "Raffle_NotOwner",
             "inputs": []
         },
@@ -1122,5 +1173,3 @@ export const RAFFLE_ABI = [
             "inputs": []
         }
     ];
-export const RAFFLE_FACTORY_ADDRESS = "0x2ea3a205B3C45E7a99C4CAe26f83763F92D94647";
-

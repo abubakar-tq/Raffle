@@ -3,10 +3,14 @@
 
 import { useState, useEffect } from "react";
 import CreateLotteriesButton from "./CreateLotteriesButton";
-import { readContract,writeContract,waitForTransactionReceipt } from "wagmi/actions";
+import { readContract, writeContract, waitForTransactionReceipt } from "wagmi/actions";
 
 import { wagmiConfig } from "@/lib/wagmiConfig";
-import { RAFFLE_FACTORY_ADDRESS,RAFFLE_FACTORY_ABI} from "@/lib/contractData";
+import { RAFFLE_FACTORY_ADDRESS, RAFFLE_FACTORY_ABI,RAFFLE_ABI } from "@/lib/contractData";
+
+
+
+
 
 
 const CreateLottery = () => {
@@ -18,23 +22,27 @@ const CreateLottery = () => {
     const [days, setDays] = useState("");
     const [minutes, setMinutes] = useState("");
     const [seconds, setSeconds] = useState("");
+    
 
     // Simulate fetching lottery ID (replace with real data fetch)
     useEffect(() => {
         const fetchLotteryId = async () => {
             // Mock API call (replace with wagmi or contract call)
             console.log("Raffle Factory Address:", RAFFLE_FACTORY_ADDRESS);
-            const result =await readContract(wagmiConfig,{
-                address:RAFFLE_FACTORY_ADDRESS,
+            const result = await readContract(wagmiConfig, {
+                address: RAFFLE_FACTORY_ADDRESS,
                 abi: RAFFLE_FACTORY_ABI,
-                functionName:"getRaffleCount", 
+                functionName: "getRaffleCount",
             });
-            const newId= Number(result) + 1;
-            console.log("Fetched Lottery ID:",newId );
-            setLotteryId(newId+1);
+            const newId = Number(result);
+            console.log("Fetched Lottery ID:", newId);
+            setLotteryId(newId);
+
+
         };
         fetchLotteryId();
     }, []);
+
 
     // Handle form submission
     const handleSubmit = async (e) => {
@@ -53,7 +61,7 @@ const CreateLottery = () => {
         const entryFeeInWei = parseFloat(entryFee) * 1e18; // Assuming entry fee is in ETH
         console.log("Entry Fee in Wei:", entryFeeInWei);
 
-        const txHash=await writeContract(wagmiConfig, {
+        const txHash = await writeContract(wagmiConfig, {
             address: RAFFLE_FACTORY_ADDRESS,
             abi: RAFFLE_FACTORY_ABI,
             functionName: 'CreateRaffle',
@@ -65,7 +73,7 @@ const CreateLottery = () => {
         });
 
         console.log("Lottery created successfully with txHash:", txHash);
-        
+
     };
 
     return (
@@ -81,7 +89,7 @@ const CreateLottery = () => {
                             value={lotteryId}
                             readOnly
                             className="mt-1 block w-full p-2 border-2 border-[#131313] rounded-xl  text-[#747474]"
-                            placeholder="Auto-filled"
+                            placeholder="Id"
                         />
                     </div>
                     <div className="flex-1">
@@ -92,7 +100,7 @@ const CreateLottery = () => {
                             className="mt-1 block w-full p-2 border-2 border-[#131313] rounded-xl   text-[#FFFFFF]"
                         >
                             <option value="Ethereum">Ethereum</option>
-                           
+
 
                         </select>
                     </div>
@@ -121,7 +129,7 @@ const CreateLottery = () => {
                             onChange={(e) => setEntryFee(e.target.value)}
                             className="mt-1 block w-full p-2 border-2 border-[#131313] rounded-xl  pr-16"
                             placeholder="0.00"
-                            step="0.01"
+                            step="any"
                             min="0"
                             required
                         />
