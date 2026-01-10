@@ -18,6 +18,10 @@ docs/
 # Dotenv file
 .env*
 
+# Allow committing example env templates
+!.env.example
+!.env.*.example
+
 
 
 
