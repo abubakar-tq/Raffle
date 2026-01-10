@@ -1,12 +1,19 @@
 "use client"
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAdmin } from '@/lib/useAdmin';
+import { toast } from 'sonner';
 
 const CreateLotteriesButton = ({ className =""}) => {
 
   const router = useRouter();
+  const { canWrite } = useAdmin();
 
   const handleClick = () => {
+    if (!canWrite) {
+      toast.error('Demo mode: Connect owner wallet to enable this action.');
+      return;
+    }
 
     router.push('/admin/create');
   }

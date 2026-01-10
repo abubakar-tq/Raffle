@@ -7,6 +7,8 @@ import { readContract, writeContract, waitForTransactionReceipt } from "wagmi/ac
 
 import { wagmiConfig } from "@/lib/wagmiConfig";
 import { RAFFLE_FACTORY_ADDRESS, RAFFLE_FACTORY_ABI,RAFFLE_ABI } from "@/lib/contractData";
+import { useAdmin } from '@/lib/useAdmin';
+import { toast } from 'sonner';
 
 
 
@@ -44,9 +46,18 @@ const CreateLottery = () => {
     }, []);
 
 
+    const { canWrite } = useAdmin();
+
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Guard: only owners (isAdmin) can write
+        if (!canWrite) {
+            toast.error('Demo mode: Connect owner wallet to enable this action.');
+            return;
+        }
+
         console.log({
             lotteryId,
             lotteryName,

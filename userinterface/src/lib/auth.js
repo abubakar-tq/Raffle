@@ -1,6 +1,6 @@
 import { useSignMessage, useAccount } from 'wagmi';
-import supabase  from './supabase';
-import {jwtDecode} from 'jwt-decode';
+import supabase from './supabase';
+import { jwtDecode } from 'jwt-decode';
 import useWalletStore from './useWalletStore';
 
 
@@ -23,37 +23,41 @@ export const useWalletAuth = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress: address, signature, message }),
       });
-      const { access_token, refresh_token, error } = await response.json();
+      const { email, email_otp, action_link, error } = await response.json();
       if (error) throw new Error(error);
 
-      // Decode JWT to extract custom_role
+      if (!email_otp) {
+        throw new Error("Missing email_otp from server. (Edge Function returned action_link instead)");
+      }
+
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({
+        email,
+        token: email_otp,
+        type: 'magiclink',
+      });
+      if (verifyError) throw verifyError;
+
+
+      const access_token = data.session.access_token;
+      const refresh_token = data.session.refresh_token;
+
+      // Decode JWT to extract custom_role (same as before)
       const decodedToken = jwtDecode(access_token);
       const customRole = decodedToken?.user_metadata?.custom_role || 'player';
-      console.log('Decoded token:', decodedToken);
-      
-      // Determine if the user is an admin
-      console.log('Custom role:', customRole);
       const isAdmin = customRole === 'admin';
-      console.log('Is admin:', isAdmin);
-      
 
-      // Update Zustand store
+      // Update Zustand store (same as before)
       useWalletStore.getState().setWallet({
         isConnected: true,
         isAdmin,
         address,
         accessToken: access_token,
-        refreshToken: refresh_token || null,
+        refreshToken: refresh_token,
       });
 
-      // Set Supabase session
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token,
-        refresh_token: refresh_token || null,
-      });
-      if (sessionError) throw sessionError;
 
       return access_token;
+
     } catch (error) {
       console.error('Login failed:', error);
       throw error;

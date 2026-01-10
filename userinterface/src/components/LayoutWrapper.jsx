@@ -6,9 +6,11 @@ import { useEffect } from "react";
 import useWalletStore from "../lib/useWalletStore";
 import NavigationBar from "@/components/NavigationBar";
 import AdminSidebar from "@/components/admin/Sidebar";
+import AdminBanner from "@/components/admin/AdminBanner";
 import Footer from "@/components/Footer";
 import RaffleEventListener from "@/lib/eventListeners";
 import  supabase  from "@/lib/supabase";
+import { usePathname } from 'next/navigation';
 
 export default function LayoutWrapper({ children }) {
   const { address, isConnected } = useAccount();
@@ -46,10 +48,13 @@ useEffect(() => {
 
 
 
+  const pathname = usePathname();
+  const isAdminPath = pathname && pathname.startsWith('/admin');
+
   return (
     <>
       <RaffleEventListener />
-      {!isAdmin ? (
+      {!isAdmin && !isAdminPath ? (
         <>
           <NavigationBar
             className="custom-gradient border-0 rounded-4xl"
@@ -76,6 +81,8 @@ useEffect(() => {
             <AdminSidebar />
 
             <div className="py-6 ps-16 pe-4 flex-1">
+
+              <AdminBanner />
 
               {children}
             </div>
