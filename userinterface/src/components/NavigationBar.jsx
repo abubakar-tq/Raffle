@@ -24,14 +24,17 @@ const NavigationBar = ({ className = "", navFirstOption, navSecondOption, navThi
                 </Link>
 
                 <div className="flex gap-12 border-l border-white/10 pl-5 ml-6">
-                    <Link href={`${path}/${navFirstOption.toLowerCase()}`} className="hover:text-gray-200">
+                    <Link href={`${path}/${navFirstOption.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-gray-200">
                         {navFirstOption}
                     </Link>
-                    <Link href={`${path}/${navSecondOption.toLowerCase()}`} className="hover:text-gray-200">
+                    <Link href={`${path}/${navSecondOption.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-gray-200">
                         {navSecondOption}
                     </Link>
-                    <Link href={`${path}/${navThirdOption.toLowerCase()}`} className="hover:text-gray-200">
+                    <Link href={`${path}/${navThirdOption.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-gray-200">
                         {navThirdOption}
+                    </Link>
+                    <Link href="/admin/overview" className="hover:text-gray-200">
+                        Admin Dashboard
                     </Link>
                 </div>
             </div>

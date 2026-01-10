@@ -35,7 +35,7 @@ const LotteryHistoryTable = ({ data = [] }) => {
         </thead>
         <tbody className="text-[#FFFFFF]">
           {tableData.map((row, index) => (
-            <tr key={index} className="border-b border-gray-600">
+            <tr key={`${row.lotteryId}-${index}`} className="border-b border-gray-600">
               <td className="py-2 px-2">{row.lotteryId}</td>
               <td className="py-2 px-2">{row.lastWinner}</td>
               <td className="py-2 px-2">{row.prize}</td>
