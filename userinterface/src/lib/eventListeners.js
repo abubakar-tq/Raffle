@@ -79,7 +79,7 @@ const RaffleEventListener = () => {
 
                 // Register upkeep for admins
                 if (isAdmin) {
-                   
+
 
                     const subId = await readContract(wagmiConfig, {
                         address: raffleAddress,
@@ -122,12 +122,27 @@ const RaffleEventListener = () => {
 
 
 
+
+
     useEffect(() => {
+  let unsubscribes = [];
 
-        setupRaffleEventWatchers();
+  const init = async () => {
+    // Prevent duplicate setups
+    if (unsubscribes.length > 0) return;
 
+    unsubscribes = await setupRaffleEventWatchers();
+  };
 
-    }, []);
+  init();
+
+  return () => {
+    // Clean up all watchers
+    unsubscribes.forEach((unsub) => unsub && unsub());
+    unsubscribes = [];
+  };
+}, []); // Empty dependency = run once
+
 
 
 

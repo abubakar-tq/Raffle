@@ -13,7 +13,7 @@ import  supabase  from "@/lib/supabase";
 export default function LayoutWrapper({ children }) {
   const { address, isConnected } = useAccount();
 
-  const { isAdmin, updateWallet,raffl } = useWalletStore();
+  const { isAdmin, updateWallet,raffle } = useWalletStore();
 
   const fetchRaffleContracts = useWalletStore(state => state.fetchRaffleContracts);
 
@@ -22,7 +22,7 @@ useEffect(() => {
     .channel("raffle-contracts-listener")
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "raffle_contracts" },
+      { event: "*", schema: "public", table: "raffles" },
       (payload) => {
         console.log("Raffle contracts updated:", payload);
         fetchRaffleContracts();
@@ -37,17 +37,6 @@ useEffect(() => {
     supabase.removeChannel(channel);
   };
 }, [fetchRaffleContracts]);
-
-
-
-  // useEffect(() => {
-  //   const adminAddress = "0x8943F7348E2559C6E69eeCb0dA932424C3E6dC66";
-  //   updateWallet({
-  //     isConnected,
-  //     isAdmin: isConnected && address?.toLowerCase() === adminAddress.toLowerCase(),
-  //     address,
-  //   });
-  // }, [address, isConnected, updateWallet]);
 
   useEffect(() => {
     if (!isConnected || !address) {

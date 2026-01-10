@@ -307,35 +307,48 @@ export async function addConsumerToSubscription(raffleId) {
 
 //Event Watchers Setup 
 //Watch event for tickets bought 
-export async function setupRaffleEventWatchers() {
-  //fetch from supabase first
-  const { data: raffles, error } = await supabase
-    .from('raffles')
-    .select('raffle_address')
-    .eq('is_open', true);
+export const setupRaffleEventWatchers = async () => {
+  const unsubscribes = [];
 
-  if (error) {
-    console.error('Error fetching active raffles:', error);
-    return;
+  //  Fetch open raffles (is_open = true)
+  const { data: openRaffles, error: openError } = await supabase
+    .from("raffles")
+    .select("raffle_address")
+    .eq("is_open", true);
+
+  if (openError) {
+    console.error("Error fetching open raffles:", openError);
+  } else {
+    for (const { raffle_address } of openRaffles) {
+      unsubscribes.push(watchEnterRaffle(raffle_address));
+      unsubscribes.push(watchWinnerPicked(raffle_address));
+    }
   }
 
-  console.log("Raffles: ", raffles)
+  //  Fetch closed raffles (is_open = false)
+  const { data: closedRaffles, error: closedError } = await supabase
+    .from("raffles")
+    .select("raffle_address")
+    .eq("is_open", false);
 
-
-
-  for (const { raffle_address } of raffles) {
-    console.log("RaffleAddress:", raffle_address)
-    watchEnterRaffle(raffle_address);
-    watchWinnerPicked(raffle_address);
-    watchOpenRaffle(raffle_address);
+  if (closedError) {
+    console.error("Error fetching closed raffles:", closedError);
+  } else {
+    for (const { raffle_address } of closedRaffles) {
+      unsubscribes.push(watchOpenRaffle(raffle_address));
+    }
   }
-}
+
+  return unsubscribes;
+};
+
 
 function watchEnterRaffle(raffleAddress) {
   const unsubscribeEnterRaffle = watchContractEvent(wagmiConfig, {
     address: raffleAddress,
     abi: RAFFLE_ABI,
     eventName: 'RaffleEntered',
+    pollingInterval: 15000, 
     onLogs: (logs) => {
       logs.forEach(async (log) => {
         const { args } = log;
@@ -359,6 +372,7 @@ function watchWinnerPicked(raffleAddress) {
     address: raffleAddress,
     abi: RAFFLE_ABI,
     eventName: 'WinnerPicked',
+    pollingInterval: 15000, 
     onLogs: (logs) => {
       logs.forEach(async (log) => {
         const { args } = log;
@@ -381,6 +395,7 @@ function watchOpenRaffle(raffleAddress) {
     address: raffleAddress,
     abi: RAFFLE_ABI,
     eventName: 'RaffleOpened',
+    pollingInterval: 15000, 
     onLogs: (logs) => {
       logs.forEach(async (log) => {
         const { args } = log;

@@ -1,5 +1,5 @@
 "use client"
-import Link from 'next/link';
+import Link from 'next/link.js';
 import ConnectWallet from "./ConnectWallet.jsx"
 
 const Navbar = ({ }) => {

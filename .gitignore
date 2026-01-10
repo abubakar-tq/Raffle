@@ -20,6 +20,7 @@ docs/
 
 
 
+
 # # === Git Submodules
 # .gitmodules
 
@@ -28,4 +29,5 @@ docs/
 Thumbs.db
 
 # === GitHub-related
-.github/            
+.github/     
+./frontend_old       

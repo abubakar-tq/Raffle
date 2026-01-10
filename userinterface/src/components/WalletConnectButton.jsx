@@ -51,7 +51,7 @@ export default function WalletConnectButton({ className = "", type = "" }) {
             const walletAddress = data.accounts[0];
             console.log("Connected wallet:", walletAddress);
             const token = await login(walletAddress);
-            // setupRaffleEventWatchers()
+            
             if (!token) {
               console.error("Login failed, no token received");
               return;
