@@ -57,7 +57,7 @@ useEffect(() => {
       {!isAdmin && !isAdminPath ? (
         <>
           <NavigationBar
-            className="custom-gradient border-0 rounded-4xl"
+            className="custom-gradient border-0 rounded-xl"
             navFirstOption="Lotteries"
             navSecondOption="Community"
             navThirdOption="About Us"

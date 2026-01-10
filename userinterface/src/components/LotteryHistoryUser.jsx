@@ -51,7 +51,7 @@ const LotteryHistoryUser = ({ handleCloseHistoryPopup, lottery }) => {
                     ) : (
                         historyData.map((row, index) => (
                             <div
-                                key={index}
+                                key={`${row.winner}-${row.timestamp}-${index}`}
                                 className="bg-white text-[#000000] bg-opacity-80 rounded-2xl p-2 mt-4 w-full shadow-lg backdrop-blur-sm mb-4 flex"
                                 style={{
                                     boxShadow:

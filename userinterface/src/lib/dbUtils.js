@@ -100,10 +100,25 @@ export async function getLotteryHistoryById(lotteryId) {
 export async function getLotteriesDetail() {
     //need (active ,balance , players )
 
-    const res = await fetch("/api/players-count");
-    const data = await res.json();
-    console.log("Total Players:", data.totalPlayers);
-    const playerCount = data.totalPlayers;
+    let playerCount = 0;
+    
+    try {
+        const res = await fetch("/api/players-count");
+        
+        if (!res.ok) {
+            console.error("Failed to fetch player count:", res.status, res.statusText);
+        } else {
+            const text = await res.text();
+            if (text) {
+                const data = JSON.parse(text);
+                console.log("Total Players:", data.totalPlayers);
+                playerCount = data.totalPlayers || 0;
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching player count:", error);
+        playerCount = 0;
+    }
 
     console.log("Total Players:", playerCount);
 

@@ -50,7 +50,11 @@ const ActivePage = () => {
                 remainingMs: remainingMs
             };
         })
-        .filter(lottery => lottery.remainingMs > 0); // Filter out expired lotteries
+        .filter(lottery => lottery.remainingMs > 0) // Filter out expired lotteries
+        .filter(lottery => 
+            lottery.id.toString().includes(searchTerm) || 
+            lottery.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ); // Filter by search term
 
     console.log("Lottery Data:" ,lotteryData)
 

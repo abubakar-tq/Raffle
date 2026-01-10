@@ -60,7 +60,7 @@ const AdminTable = ({ headers, data, lastColumnType = null, tbodyClassName='' , 
                 <tbody  >
                     {data.map((row, rowIndex) => (
                         <tr
-                            key={rowIndex}
+                            key={row.id || rowIndex}
                             className={`${rowIndex % 2 === 0 ? "bg-[#101010]" : "bg-black"
                                 } text-white `}
                         >
