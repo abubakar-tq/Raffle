@@ -87,13 +87,13 @@ Create `userinterface/.env.local`:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_RAFFLE_FACTORY_ADDRESS=
 SUPABASE_SERVICE_ROLE_KEY=
+ANVIL_RPC_URL=
+SEPOLIA_RPC_URL=
 ```
 
-### Contract + RPC config
 
-- Update the on-chain addresses in `userinterface/src/lib/contractData.js` (factory address + ABIs).
-- Update RPCs in `userinterface/src/lib/wagmiConfig.js` (currently includes a hard-coded Sepolia RPC and local Anvil).
 
 ## Sepolia deployment
 
@@ -105,5 +105,4 @@ make deploy-sepolia
 
 ## Notes for reviewers
 
-- `frontend_old/` is intentionally ignored and not part of the maintained code path.
 - `broadcast/`, `cache/`, `out/` contain local artifacts and script logs.
